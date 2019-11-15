@@ -1,7 +1,155 @@
 <!doctype html>
-<meta charset="utf-8">
-<script src="https://distill.pub/template.v1.js"></script>
 
-<dt-article>
-  <h1>Hello World</h1>
+
+<!-- Global site tag (gtag.js) - Google Analytics  -->
+<!--
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110849882-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110849882-1');
+</script>
+-->
+
+
+<meta charset="utf-8">
+<script src="template.v1_mod.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+
+<script type="text/front-matter">
+  title: Spiral Wishing Wells
+  published: November 17, 2018
+  authors:
+  - Kudzo Ahegbebu
+  affiliations:
+
+</script>
+
+
+<dt-article >
+ <h1>Non-inertial Reference Frames and Coin Wishing Wells (Part I)</h1>
+ <h2> Apparently I blog now...</h2>
+ <dt-byline> </dt-byline>
+<!--
+ <style>
+ .sidebar {
+    width: 45px;
+    height: 90px;
+    position: fixed;
+    left: 0px;
+    top: 300px;
+    border: 1px solid black;
+ }
+ </style>
+ <div class='sidebar'>I'm a sidebar</div>
+-->
+
+
+
+ <p> Sometime ago, a friend of mine and I were curious about the physical principles that
+   cause coins to sprial so elegantly down the kinds of coin funnels one
+  might find at the  local mall.
+   After searching online we were unable to find a
+   description that was both mathematically satisfying and sufficiently captured
+   the relevant physics. Having some free time, we decided to tackle this problem on our own </p>
+
+   <h3> Let's talk Lagrangians </h3>
+
+  <p> Loosely speaking, in physics , whenever one is working on a trajectory problem that
+    involves non-cartesian coordinates it's often easier to find the equations of motion
+    using the lagrangian framework, which (as we'll see for this problem) is far more convenient for solving
+    problems that aren't so well suited for Newton's formulation of classical mechanics. </p>
+
+
+    <p> In particular, the utility of  Lagrange's framework is that it allows for us to work
+      in the so called <i> generalized coordiantes </i>. The principle being that if we're being clever,
+      these generalized coordinates can (and indeed should) be chosen to exploit geometry or symetries
+      present in the system we wish to analyze. </p>
+
+      <p> <center> <img src = "Wishing_Well.jpeg" width="400" > </center> </p>
+
+       <p> Looking at this image of a coin well cross section, we can imagine that it might be
+         useful to describe the motion of a coin about the funnel in terms of it's radius $\hat{r}$ from the center  of the funnel,
+         it's azimuthal angle $\hat{\theta}$, and it's height $\hat{z}$ within the well. </p>
+
+         <p>Above, the lagrangian is a function of kinetic and potential energy. For the kinetic energy we have:
+           $$ T(x,y,z)= \frac{1}{2}m(\dot{x}^2+\dot{y}^2 +\dot{z}^2)  \leftrightarrow  T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\dot{z}^2) $$
+           the second expression for kinetic energy $T$ follows since we have $x = rcos(\theta)$ and $y= rsin(\theta)$.
+
+Then, since the height $z$ is a function of the radius $r$ we have
+  $$ \dot{z}(r,\dot{r}) = \frac{c_1\dot{r}}{r^2} \leadsto
+  T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4}) $$ </p>
+
+  <p> The potential energy for this system comes simply as a result of gravity. From kindergarten we have,
+    $$ U(z) = mgz \rightarrow  U(r) = mg(-\frac{c_1}{r}+c_2) $$ </p>
+
+    <p> Therefore, we may write the lagrangian function $\mathcal{L}=T-U$ as
+      $$\mathcal{L}=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4}) - g(\frac{c_1}{r}+c_2) $$
+At this point, before proceeding with Lagrange's equation, it's important to note that expression above doesn't
+account for non-conservative forces (like friction) that dissipate the total energy of the coin as it proceeds down the well.
+It could be useful to model these viscous effects using the seemingly reasonable assumption that these fricitonal
+forces scaled proportionally with radial and angular velocity <dt-fn>It turns out afterward, that this is actually a damn fine first order approximation.</dt-fn>.
+
+As an educated guess one could assume that this dissapative force might look something like
+$$F = \frac{1}{2}(k_r\dot{r}^2+k_{\theta}\dot{\theta}^2) $$
+Where $k_r$ and $k_{\theta}$ are just some dissipative constants. This is the so called
+Rayleigh dissipation function <dt-cite key="Ray_diss_fun"></dt-cite>
+
+<p> For the radial component ,the Lagrange Equation (taking into account the dissipative friction effects we might expect the coin well to follow) may be written as
+  $$\frac{\partial \mathcal{L}}{\partial r}-\frac{\partial \mathcal{L}}{\partial t}\frac{\partial \mathcal{L}}{\partial \dot{r}} = \frac{\partial F}{\partial \dot{r}} $$
+  After substituting the lagrangian  function $\mathcal{L}$ into the expression above, and after some tedious algebra we finally arrive at our first equation of motion
+  $$\boxed{\ddot{r}(\frac{r^4+c_1^2}{r^4})-\frac{2c_1^2\dot{r}^2}{r^5}+\frac{gc_1}{r^2}-r\dot{\theta}^2=\frac{k_r\dot{r}}{m}} $$ Bitchin'! </p>
+
+   <p>Doing precisely the same thing for the $\theta$ component, we arrive at the second equation of motion
+    $$\boxed{-(r^2\ddot{\theta}+2r\dot{r}\dot{\theta})=k\dot{\theta}} $$
+
+    If you're unfamiliar with lagrangian mechanics, allow me to take a moment to explain why this result is significant:
+    The complete equations of motion for this system were obtained <i>despite</i> the fact that we <i>only</i> specified the kinetic and potential energies of the coin without any
+ reference to Newtonian theory i.e we were able to do this without ever explicitly considering the <i>forces </i> acting on the coin.
+
+<h3>Experiments and Simulations</h3>
+<p>I took the equations of motion above and plugged the differential equations above into MATLAB in order to simulate the coin's trajectory. </p>
+
+<center> <img src = "test_animate.gif" width="500" ></center>
+<p>Taking just a cursory qualitave look at the general form of the trajectory looks remarkably like the trajectories one sees in the actual coin wells.
+In the next part of this article, we'll take a look at how we can get more quantiative confidence that what we've derived corresponds to reality. Stay tuned!</p>
+
+
+
+
+
+
+
+</aside> <p>
+
+ <script type="text/bibliography">
+
+  @article{thor_mar_conic,
+    title={Conic Sections},
+    author={Stephen Thorton, Jerry Marion},
+    booktitle={Classical Dynamics},
+    year={2003},
+  }
+
+  @article{Ray_diss_fun,
+    title={The Rayleigh dissipation function},
+    author={Oskar Paulsson},
+    url={https://jfuchs.hotell.kau.se/kurs/amek/prst/14_radi.pdf},
+    year={2014},
+  }
+ </script>
+
+  <dt-appendix>
+</dt-appendix>
 </dt-article>
