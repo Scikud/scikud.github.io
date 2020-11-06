@@ -1,174 +1,21 @@
+---
+layout: null
+---
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ForceMultiplied</title>
-    <description>.</description>
-    <link>http://localhost:4000/blog/</link>
-    <atom:link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/rss+xml" />
-    
+    <title>{{ site.title | xml_escape }}</title>
+    <description>{{ site.description | xml_escape }}</description>
+    <link>{{ site.url }}{{ site.baseurl }}/</link>
+    <atom:link href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml" />
+    {% for post in site.posts limit:10 %}
       <item>
-        <title>Fumbling in the dark</title>
-        <description>&lt;p&gt;Election week 2020 has been one of the longest 18 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder in the limits of my will.&lt;/p&gt;
-
-&lt;p&gt;The backdrop of chaos and existential dread not withstanding, in the past two weeks I’ve begun wrestling more seriously with many of the same questions I imagine all early stage researchers find themselves struggling with.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;How do I efficiently allocate my time? What are the right problems? What subset of those are amenable to tractable progress?&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Of course, responses to the core of how to address these questions have been crafted by a multitude of perspectives from many talented writers and research scientists&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. &lt;em&gt;Intellectually&lt;/em&gt; I think I hear what they’re saying, however, I’m still not quite sure I yet &lt;em&gt;grok&lt;/em&gt; what they mean.&lt;/p&gt;
-
-&lt;h3 id=&quot;rabbit-holes&quot;&gt;Rabbit Holes&lt;/h3&gt;
-&lt;p&gt;For my cohort these questions take increasing saliency as our project selection phase approaches. 
-In the midst of this, one of the particularly frustrating tactical aspects of the past two weeks has been being stuck in rabbit holes. Frustrating, because attempting to align some foundational concept with your intuition  seems both educationally productive yet in absolute terms unduly time consuming. It’s difficult to decipher what the correct middle ground should be. After-all, wrestling deeply with problems and learning to get yourself unstuck is a critical skill. I’ve talked to a couple people about this and through these discussions two major themes recur.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt; &lt;em&gt;Use the resources of those around you:&lt;/em&gt; One thing I've come to quickly realize is how ineffectively I'm leveraging the incredible talent and resources in my proximity. I need to become better at asking more questions to more people more frequently. There is something to be gained by learning to trod through problems independently, however it makes no sense to not take full advantage of the mentorship and knowledge base that's so readily accessible&lt;/li&gt;
-
-&lt;li&gt; &lt;em&gt;Keeping context in mind, learn to work with imperfect information&lt;/em&gt; . The tendency to dive into rabbit holes is one I think is born from a desire to have perfect domain information. While obviously such an impulse can be helpful and even motivating, one of perhaps even more utility is the ability to contextualize and bound your uncertainty around particular concepts in order to ensure you don't allow relatively minor detail to occlude your view of the bigger picture. 
- &lt;/li&gt;
-
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;what-ive-been-thinking-about&quot;&gt;What I’ve been thinking about&lt;/h2&gt;
-&lt;p&gt;Originally I actually planned to write this blog post as an attempt to breathe coherence into my thoughts on some linked concepts relating different research directions i’ve been thinking about. Briefly, i’ve been thinking about meta learning and operations that bake in inductive bias and various cognitive priors onto the latent space of attention models. Particularly mechanisms that would allow us to have weak formal guarantees on the  outputs produced by these models.  However, I’m not quite sure my thoughts are yet as organized on that front as i’d like for them to be. I’d like to come back and write about that some other time.&lt;/p&gt;
-
-&lt;p&gt;By the way this entire post was written by GPT3. Just playing. Catch you on the flip!&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Hamming’s &lt;a href=&quot;https://www.cs.virginia.edu/~robins/YouAndYourResearch.pdf&quot;&gt;“You and Your research”&lt;/a&gt; and  Schulman’s &lt;a href=&quot;http://joschu.net/blog/opinionated-guide-ml-research.html&quot;&gt;“Opinionated Guide to ML Research”&lt;/a&gt; come to mind &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Thu, 05 Nov 2020 04:56:29 -0800</pubDate>
-        <link>http://localhost:4000/blog/openai/2020/11/05/ay-dios-mio/</link>
-        <guid isPermaLink="true">http://localhost:4000/blog/openai/2020/11/05/ay-dios-mio/</guid>
+        <title>{{ post.title | xml_escape }}</title>
+        <description>{{ post.content | xml_escape }}</description>
+        <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
+        <link>{{ post.url | prepend: site.baseurl | prepend: site.url }}</link>
+        <guid isPermaLink="true">{{ post.url | prepend: site.baseurl | prepend: site.url }}</guid>
       </item>
-    
-      <item>
-        <title>OpenAIs Scholars Initial Thoughts</title>
-        <description>&lt;p&gt;I’m starting a new blog&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;  to mark the beginning of my time as part of the OpenAI scholar’s program&lt;/p&gt;
-
-&lt;h2 id=&quot;things-im-excited-about&quot;&gt;Things I’m excited about&lt;/h2&gt;
-&lt;p&gt;I’m deeply excited and humbled to work with such an incredible and deeply talented pool of individuals, both within my cohort and within OpenAI in general. The first week has been such a whirlwind of excitement. I’ve spent much of it shoring up my foundations in machine learning theory and application as well tyring to find my bearings in the wide sea of research interests.&lt;/p&gt;
-
-&lt;p&gt;I joined this program because of my belief that well aligned machine intelligence can act as an incredible force multiplier for a wide range of human endeavors. I’m most excited by the incredible generality of deep learning; the remarkable ability to abstract and  apply the same set of algorithms to a wide range of seemingly disparate problems. This paradigm excites me because it  reimagines computers and computation as being more than numerical automata but as robust tools capable of ingesting and producing rich inputs and outputs allowing us to augment our own problem solving capacity and by extension amplify ingenuity and improve the human condition. Honestly, what could be more exciting or compelling as a research interest?&lt;/p&gt;
-
-&lt;h2 id=&quot;ramblings&quot;&gt;Ramblings&lt;/h2&gt;
-&lt;p&gt;One thing I’ve personally found useful is keep running track of ideas that emerge during the course of self study. I’ve found this idea tracking helpful in the meta-sense; in that, over time it helps me see emerging trends in my train of thought. I’m really not sure how useful these stream of consciousness type expositions will be for others, but nevertheless here are some of my thoughts from this week:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Training a neural network produces a model that we can think of as some object whose weights and biases provide discrete estimates of the high dimensional manifold our training data lies on. Along this train of thought, can we  think of the hyperparameters of two different networks trained on the same data as two different samples of the same underlying ‘true’ manifold? What then is the relationship (if any) between the weights of these two models? Is it possible to be clever and somehow combine these two manifold samplings to get a better estimate of the true manifold ala something loosely analogous to &lt;a href=&quot;https://francisbach.com/richardson-extrapolation/&quot;&gt;Richardson Extrapolation&lt;/a&gt; /Bayesian updating ?&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;When training neural networks we typically include as part of the loss function, a regularization term. The idea behind this is that penalizing large model weights we can prevent the co-adaptation of network weights and limit the networks ability to learn local noise in the underlying training data thus leading to better generalization.  The regularization terms i’ve seen thus far are fairy straightforward l1 or l2 norms on the network weights. I’m curious to explore the effectiveness of regularizing with more sophisticated techniques. Like regularizing with the goal to minimize entropy or something along that vein.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;That’s it for now. Catch you all later!&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;For the literally two people who read the single post in the old blog, I’ve migrated that post as well :) &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Thu, 22 Oct 2020 05:56:29 -0700</pubDate>
-        <link>http://localhost:4000/blog/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</link>
-        <guid isPermaLink="true">http://localhost:4000/blog/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</guid>
-      </item>
-    
-      <item>
-        <title>Non-inertial Reference Frames and Coin Wishing Wells (Part I)</title>
-        <description>&lt;p&gt;Sometime ago, a friend of mine and I were curious about the physical principles that cause coins to sprial so elegantly down the kinds of coin funnels one might find at the  local mall.
-After searching online we were unable to find a description that was both mathematically satisfying and sufficiently captured the relevant physics. Having some free time, we decided to tackle this problem on our own&lt;/p&gt;
-
-&lt;h3 id=&quot;lets-talk-lagrangians&quot;&gt;Let’s talk Lagrangians&lt;/h3&gt;
-
-&lt;p&gt;Loosely speaking, in physics , whenever one is working on a trajectory problem that
-involves non-cartesian coordinates it’s often easier to find the equations of motion
-using the Lagrangian framework, which (as we’ll see for this problem) is far more convenient for solving
-problems that aren’t so well suited for Newton’s formulation of classical mechanics.&lt;/p&gt;
-
-&lt;p&gt;In particular, the utility of  Lagrange’s framework is that it allows for us to work
-in the so called &lt;em&gt;generalized coordinates&lt;/em&gt;. The principle being that if we’re being clever,
-these generalized coordinates can (and indeed should) be chosen to exploit geometry or symmetries
-present in the system we wish to analyze.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/OldBlog/Wishing_Well.jpeg&quot; alt=&quot;wishingWell&quot; width=&quot;400px&quot; /&gt;.&lt;/p&gt;
-
-&lt;p&gt;Looking at this image of a coin well cross section, we can imagine that it might be
-useful to describe the motion of a coin about the funnel in terms of it’s radius \(\hat{r}\) from the center  of the funnel,
-it’s azimuthal angle \(\hat{\theta}\), and it’s height \(\hat{z}\) within the well.&lt;/p&gt;
-
-&lt;p&gt;Above, the Lagrangian is a function of kinetic and potential energy. For the kinetic energy we have:&lt;/p&gt;
-
-\[T(x,y,z)= \frac{1}{2}m(\dot{x}^2+\dot{y}^2 +\dot{z}^2)  \leftrightarrow  T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\dot{z}^2)\]
-
-&lt;p&gt;the second expression for kinetic energy \(T\) follows since we have 
-\(x = rcos(\theta)\) and \(y= rsin(\theta)\).
-Then, since the height \(z\) is a function of the radius \(r\) we have&lt;/p&gt;
-
-\[\dot{z}(r,\dot{r}) = \frac{c_1\dot{r}}{r^2} \leadsto T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4})\]
-
-&lt;p&gt;The potential energy for this system comes simply as a result of gravity. From kindergarten we have,&lt;/p&gt;
-
-\[U(z) = mgz \rightarrow  U(r) = mg(-\frac{c_1}{r}+c_2)\]
-
-&lt;p&gt;Therefore, we may write the lagrangian function \(\mathcal{L}=T-U\) as&lt;/p&gt;
-
-\[\mathcal{L}=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4}) - g(\frac{c_1}{r}+c_2)\]
-
-&lt;p&gt;At this point, before proceeding with Lagrange’s equation, it’s important to note that expression above doesn’t
-account for non-conservative forces (like friction) that dissipate the total energy of the coin as it proceeds down the well.
-It could be useful to model these viscous effects using the seemingly reasonable assumption that these frictional
-forces scaled proportionally with radial and angular velocity It turns out afterward, that this is actually a damn fine first order approximation&lt;/p&gt;
-
-&lt;p&gt;As an educated guess one could assume that this dissapative force might look something like&lt;/p&gt;
-
-\[F = \frac{1}{2}(k_r\dot{r}^2+k_{\theta}\dot{\theta}^2)\]
-
-&lt;p&gt;Where \(k_r\) and \(k_{\theta}\) are just some dissipative constants. This is the so called
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Rayleigh_dissipation_function&quot;&gt;Rayleigh dissipation function&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;For the radial component ,the Lagrange Equation (taking into account the dissipative friction effects we might expect the coin well to follow) may be written as&lt;/p&gt;
-
-\[\frac{\partial \mathcal{L}}{\partial r}-\frac{\partial \mathcal{L}}{\partial t}\frac{\partial \mathcal{L}}{\partial \dot{r}} = \frac{\partial F}{\partial \dot{r}}\]
-
-&lt;p&gt;After substituting the lagrangian  function $\mathcal{L}$ into the expression above, and after some tedious algebra we finally arrive at our first equation of motion&lt;/p&gt;
-
-\[\boxed{\ddot{r}(\frac{r^4+c_1^2}{r^4})-\frac{2c_1^2\dot{r}^2}{r^5}+\frac{gc_1}{r^2}-r\dot{\theta}^2=\frac{k_r\dot{r}}{m}}\]
-
-&lt;p&gt;Bitchin’!&lt;/p&gt;
-
-&lt;p&gt;Doing precisely the same thing for the \(\theta\) component, we arrive at the second equation of motion&lt;/p&gt;
-
-\[\boxed{-(r^2\ddot{\theta}+2r\dot{r}\dot{\theta})=k\dot{\theta}}\]
-
-&lt;p&gt;If you’re unfamiliar with Lagrangian mechanics, allow me to take a moment to explain why this result is significant:
-The complete equations of motion for this system were obtained &lt;em&gt;despite&lt;/em&gt; the fact that we &lt;em&gt;only&lt;/em&gt; specified the kinetic and potential energies of the coin without any
-reference to Newtonian theory i.e we were able to do this without ever explicitly considering the &lt;em&gt;forces&lt;/em&gt; acting on the coin.&lt;/p&gt;
-
-&lt;h3 id=&quot;experiments-and-simulations&quot;&gt;Experiments and Simulations&lt;/h3&gt;
-&lt;p&gt;I took the equations of motion above and plugged the differential equations above into MATLAB in order to simulate the coin’s trajectory.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/OldBlog/test_animate.gif&quot; alt=&quot;simulation&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Taking just a cursory qualitative look at the general form of the trajectory looks remarkably like the trajectories one sees in the actual coin wells.
-In the next part of this article, we’ll take a look at how we can get more quantitative confidence that what we’ve derived corresponds to reality. Stay tuned!&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-        <pubDate>Mon, 18 Nov 2019 04:56:29 -0800</pubDate>
-        <link>http://localhost:4000/blog/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</link>
-        <guid isPermaLink="true">http://localhost:4000/blog/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</guid>
-      </item>
-    
+    {% endfor %}
   </channel>
 </rss>
