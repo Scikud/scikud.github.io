@@ -1,10 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ForceMultipler</title>
+    <title>ForceMultiplied</title>
     <description>.</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>http://localhost:4000/blog/</link>
+    <atom:link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Fumbling in the dark</title>
+        <description>&lt;p&gt;Election week 2020 has been one of the longest 18 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder in the limits of my will.&lt;/p&gt;
+
+&lt;p&gt;The backdrop of chaos and existential dread not withstanding, in the past two weeks I’ve begun wrestling more seriously with many of the same questions I imagine all early stage researchers find themselves struggling with.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;How do I efficiently allocate my time? What are the right problems? What subset of those are amenable to tractable progress?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Of course, responses to the core of how to address these questions have been crafted by a multitude of perspectives from many talented writers and research scientists&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. &lt;em&gt;Intellectually&lt;/em&gt; I think I hear what they’re saying, however, I’m still not quite sure I yet &lt;em&gt;grok&lt;/em&gt; what they mean.&lt;/p&gt;
+
+&lt;h3 id=&quot;rabbit-holes&quot;&gt;Rabbit Holes&lt;/h3&gt;
+&lt;p&gt;For my cohort these questions take increasing saliency as our project selection phase approaches. 
+In the midst of this, one of the particularly frustrating tactical aspects of the past two weeks has been being stuck in rabbit holes. Frustrating, because attempting to align some foundational concept with your intuition  seems both educationally productive yet in absolute terms unduly time consuming. It’s difficult to decipher what the correct middle ground should be. After-all, wrestling deeply with problems and learning to get yourself unstuck is a critical skill. I’ve talked to a couple people about this and through these discussions two major themes recur.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt; &lt;em&gt;Use the resources of those around you:&lt;/em&gt; One thing I've come to quickly realize is how ineffectively I'm leveraging the incredible talent and resources in my proximity. I need to become better at asking more questions to more people more frequently. There is something to be gained by learning to trod through problems independently, however it makes no sense to not take full advantage of the mentorship and knowledge base that's so readily accessible&lt;/li&gt;
+
+&lt;li&gt; &lt;em&gt;Keeping context in mind, learn to work with imperfect information&lt;/em&gt; . The tendency to dive into rabbit holes is one I think is born from a desire to have perfect domain information. While obviously such an impulse can be helpful and even motivating, one of perhaps even more utility is the ability to contextualize and bound your uncertainty around particular concepts in order to ensure you don't allow relatively minor detail to occlude your view of the bigger picture. 
+ &lt;/li&gt;
+
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;what-ive-been-thinking-about&quot;&gt;What I’ve been thinking about&lt;/h2&gt;
+&lt;p&gt;Originally I actually planned to write this blog post as an attempt to breathe coherence into my thoughts on some linked concepts relating different research directions i’ve been thinking about. Briefly, i’ve been thinking about meta learning and operations that bake in inductive bias and various cognitive priors onto the latent space of attention models. Particularly mechanisms that would allow us to have weak formal guarantees on the  outputs produced by these models.  However, I’m not quite sure my thoughts are yet as organized on that front as i’d like for them to be. I’d like to come back and write about that some other time.&lt;/p&gt;
+
+&lt;p&gt;By the way this entire post was written by GPT3. Just playing. Catch you on the flip!&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Hamming’s &lt;a href=&quot;https://www.cs.virginia.edu/~robins/YouAndYourResearch.pdf&quot;&gt;“You and Your research”&lt;/a&gt; and  Schulman’s &lt;a href=&quot;http://joschu.net/blog/opinionated-guide-ml-research.html&quot;&gt;“Opinionated Guide to ML Research”&lt;/a&gt; come to mind &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Thu, 05 Nov 2020 04:56:29 -0800</pubDate>
+        <link>http://localhost:4000/blog/openai/2020/11/05/ay-dios-mio/</link>
+        <guid isPermaLink="true">http://localhost:4000/blog/openai/2020/11/05/ay-dios-mio/</guid>
+      </item>
     
       <item>
         <title>OpenAIs Scholars Initial Thoughts</title>
@@ -39,8 +80,8 @@
 &lt;/div&gt;
 </description>
         <pubDate>Thu, 22 Oct 2020 05:56:29 -0700</pubDate>
-        <link>http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</link>
-        <guid isPermaLink="true">http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</guid>
+        <link>http://localhost:4000/blog/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</link>
+        <guid isPermaLink="true">http://localhost:4000/blog/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</guid>
       </item>
     
       <item>
@@ -125,8 +166,8 @@ In the next part of this article, we’ll take a look at how we can get more qua
 &lt;hr /&gt;
 </description>
         <pubDate>Mon, 18 Nov 2019 04:56:29 -0800</pubDate>
-        <link>http://localhost:4000/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</link>
-        <guid isPermaLink="true">http://localhost:4000/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</guid>
+        <link>http://localhost:4000/blog/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</link>
+        <guid isPermaLink="true">http://localhost:4000/blog/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</guid>
       </item>
     
   </channel>

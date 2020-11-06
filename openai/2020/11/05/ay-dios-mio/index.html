@@ -4,19 +4,19 @@
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>OpenAIs Scholars Initial Thoughts &#8211; ForceMultiplied</title>
+    <title>Fumbling in the dark &#8211; ForceMultiplied</title>
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//maxcdn.bootstrapcdn.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="New blog who dis?">
+    <meta name="description" content="Searching for lightbulbs">
     <link rel="manifest" type="application/manifest+json; charset=utf-8" href="/blog/manifest.json" />
     <meta name="robots" content="all">
     <meta name="author" content="Kudzo Ahegbebu">
     
-    <meta name="keywords" content="OpenAI, pixylls, jeykll">
-    <link rel="canonical" href="http://localhost:4000/blog/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/">
+    <meta name="keywords" content="OpenAI">
+    <link rel="canonical" href="http://localhost:4000/blog/openai/2020/11/05/ay-dios-mio/">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for ForceMultiplied" href="/blog/feed.xml" />
 
     <!-- Custom CSS -->
@@ -40,18 +40,18 @@
     <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="OpenAIs Scholars Initial Thoughts">
+    <meta property="og:title" content="Fumbling in the dark">
     <meta property="og:description" content=".">
-    <meta property="og:url" content="http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/">
+    <meta property="og:url" content="http://localhost:4000/openai/2020/11/05/ay-dios-mio/">
     <meta property="og:site_name" content="ForceMultiplied">
     
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     
-    <meta name="twitter:title" content="OpenAIs Scholars Initial Thoughts" />
-    <meta name="twitter:description" content="New blog who dis?" />
-    <meta name="twitter:url" content="http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/" />
+    <meta name="twitter:title" content="Fumbling in the dark" />
+    <meta name="twitter:description" content="Searching for lightbulbs" />
+    <meta name="twitter:url" content="http://localhost:4000/openai/2020/11/05/ay-dios-mio/" />
     
 
     <!-- Icons -->
@@ -195,8 +195,8 @@
 
 
 <div class="post-header mb2">
-  <h1>OpenAIs Scholars Initial Thoughts</h1>
-  <span class="post-meta">Oct 22, 2020</span><br>
+  <h1>Fumbling in the dark</h1>
+  <span class="post-meta">Nov 5, 2020</span><br>
   
   <span class="post-meta small">
     
@@ -206,32 +206,36 @@
 </div>
 
 <article class="post-content">
-  <p>I’m starting a new blog<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>  to mark the beginning of my time as part of the OpenAI scholar’s program</p>
+  <p>Election week 2020 has been one of the longest 18 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder in the limits of my will.</p>
 
-<h2 id="things-im-excited-about">Things I’m excited about</h2>
-<p>I’m deeply excited and humbled to work with such an incredible and deeply talented pool of individuals, both within my cohort and within OpenAI in general. The first week has been such a whirlwind of excitement. I’ve spent much of it shoring up my foundations in machine learning theory and application as well tyring to find my bearings in the wide sea of research interests.</p>
+<p>The backdrop of chaos and existential dread not withstanding, in the past two weeks I’ve begun wrestling more seriously with many of the same questions I imagine all early stage researchers find themselves struggling with.</p>
 
-<p>I joined this program because of my belief that well aligned machine intelligence can act as an incredible force multiplier for a wide range of human endeavors. I’m most excited by the incredible generality of deep learning; the remarkable ability to abstract and  apply the same set of algorithms to a wide range of seemingly disparate problems. This paradigm excites me because it  reimagines computers and computation as being more than numerical automata but as robust tools capable of ingesting and producing rich inputs and outputs allowing us to augment our own problem solving capacity and by extension amplify ingenuity and improve the human condition. Honestly, what could be more exciting or compelling as a research interest?</p>
+<p><em>How do I efficiently allocate my time? What are the right problems? What subset of those are amenable to tractable progress?</em></p>
 
-<h2 id="ramblings">Ramblings</h2>
-<p>One thing I’ve personally found useful is keep running track of ideas that emerge during the course of self study. I’ve found this idea tracking helpful in the meta-sense; in that, over time it helps me see emerging trends in my train of thought. I’m really not sure how useful these stream of consciousness type expositions will be for others, but nevertheless here are some of my thoughts from this week:</p>
+<p>Of course, responses to the core of how to address these questions have been crafted by a multitude of perspectives from many talented writers and research scientists<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>. <em>Intellectually</em> I think I hear what they’re saying, however, I’m still not quite sure I yet <em>grok</em> what they mean.</p>
+
+<h3 id="rabbit-holes">Rabbit Holes</h3>
+<p>For my cohort these questions take increasing saliency as our project selection phase approaches. 
+In the midst of this, one of the particularly frustrating tactical aspects of the past two weeks has been being stuck in rabbit holes. Frustrating, because attempting to align some foundational concept with your intuition  seems both educationally productive yet in absolute terms unduly time consuming. It’s difficult to decipher what the correct middle ground should be. After-all, wrestling deeply with problems and learning to get yourself unstuck is a critical skill. I’ve talked to a couple people about this and through these discussions two major themes recur.</p>
 
 <ol>
-  <li>
-    <p>Training a neural network produces a model that we can think of as some object whose weights and biases provide discrete estimates of the high dimensional manifold our training data lies on. Along this train of thought, can we  think of the hyperparameters of two different networks trained on the same data as two different samples of the same underlying ‘true’ manifold? What then is the relationship (if any) between the weights of these two models? Is it possible to be clever and somehow combine these two manifold samplings to get a better estimate of the true manifold ala something loosely analogous to <a href="https://francisbach.com/richardson-extrapolation/">Richardson Extrapolation</a> /Bayesian updating ?</p>
-  </li>
-  <li>
-    <p>When training neural networks we typically include as part of the loss function, a regularization term. The idea behind this is that penalizing large model weights we can prevent the co-adaptation of network weights and limit the networks ability to learn local noise in the underlying training data thus leading to better generalization.  The regularization terms i’ve seen thus far are fairy straightforward l1 or l2 norms on the network weights. I’m curious to explore the effectiveness of regularizing with more sophisticated techniques. Like regularizing with the goal to minimize entropy or something along that vein.</p>
-  </li>
+<li> <em>Use the resources of those around you:</em> One thing I've come to quickly realize is how ineffectively I'm leveraging the incredible talent and resources in my proximity. I need to become better at asking more questions to more people more frequently. There is something to be gained by learning to trod through problems independently, however it makes no sense to not take full advantage of the mentorship and knowledge base that's so readily accessible</li>
+
+<li> <em>Keeping context in mind, learn to work with imperfect information</em> . The tendency to dive into rabbit holes is one I think is born from a desire to have perfect domain information. While obviously such an impulse can be helpful and even motivating, one of perhaps even more utility is the ability to contextualize and bound your uncertainty around particular concepts in order to ensure you don't allow relatively minor detail to occlude your view of the bigger picture. 
+ </li>
+
 </ol>
 
-<p>That’s it for now. Catch you all later!</p>
+<h2 id="what-ive-been-thinking-about">What I’ve been thinking about</h2>
+<p>Originally I actually planned to write this blog post as an attempt to breathe coherence into my thoughts on some linked concepts relating different research directions i’ve been thinking about. Briefly, i’ve been thinking about meta learning and operations that bake in inductive bias and various cognitive priors onto the latent space of attention models. Particularly mechanisms that would allow us to have weak formal guarantees on the  outputs produced by these models.  However, I’m not quite sure my thoughts are yet as organized on that front as i’d like for them to be. I’d like to come back and write about that some other time.</p>
+
+<p>By the way this entire post was written by GPT3. Just playing. Catch you on the flip!</p>
 
 <hr />
 <div class="footnotes" role="doc-endnotes">
   <ol>
     <li id="fn:1" role="doc-endnote">
-      <p>For the literally two people who read the single post in the old blog, I’ve migrated that post as well :) <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+      <p>Hamming’s <a href="https://www.cs.virginia.edu/~robins/YouAndYourResearch.pdf">“You and Your research”</a> and  Schulman’s <a href="http://joschu.net/blog/opinionated-guide-ml-research.html">“Opinionated Guide to ML Research”</a> come to mind <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
