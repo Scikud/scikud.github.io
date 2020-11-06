@@ -4,7 +4,7 @@ email:       scikud@gmail.com
 author:      Kudzo Ahegbebu
 description: "."
 baseurl:     ""
-url:         ""
+url:         "https://scikud.github.io/"
 date_format: "%b %-d, %Y"
 header_pages:
 
