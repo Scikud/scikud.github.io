@@ -6,7 +6,7 @@ summary:    Searching for lightbulbs
 categories: OpenAI
 ---
 
-Election week 2020 has been one of the longest 18 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder in the limits of my will. 
+Election week 2020 has been one of the longest 56 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder of the limits of my will. 
 
 The backdrop of chaos and existential dread not withstanding, in the past two weeks I've begun wrestling more seriously with many of the same questions I imagine all early stage researchers find themselves struggling with. 
 
