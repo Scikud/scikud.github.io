@@ -22,7 +22,7 @@ $$ \text{maximize}[H(x)] = \text{maximize}[\int_{-\infty}^{\infty}p(x)\log(P(x)d
 
 To reiterate the distribution must also satisfy the finite mean and finite variance constraints, explicitly:
 
-* **Constraint 0** :Probability density function must some to 1:  $$\int_{-\infty}^{\infty}p(x)dx = 1$$ 
+* **Constraint 0** :Probability density function must sum to 1:  $$\int_{-\infty}^{\infty}p(x)dx = 1$$ 
 * **Constraint 1** :Finite mean:  $$\int_{-\infty}^{\infty}p(x)xdx = \mu $$
 * **Constraint 2** :Finite variance: $$\int_{-\infty}^{\infty}p(x)\left(x-\mu\right)^2dx = \sigma $$ 
 
@@ -57,7 +57,7 @@ keep cranking and you'll eventually end up with the following:
 
 $$ P(x) = \frac{1}{\sqrt{2\pi \sigma^2}} exp\left(-\frac{(x-mu)^2}{2 \sigma^2}\right) $$
 
-The Gaussian distribution at last. To recap, by framing our original question as a constrained optimization problem we were able to arrive at the gaussian distribution in a pretty natural way.
+The Gaussian distribution at last. To recap, by framing our original question as a constrained optimization problem we were able to retrieve the gaussian distribution in a natural sort of way.
 
 ## Origins of Backprop 
 It turns out we can reframe back-propagation in a [similar fashion](http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf). Ultimately, supervised learning is about minimizing the error between some labeled data $$Y$$ and our model's predictions, usually given by the last layer of our neural network $$Z^L$$. 
@@ -90,7 +90,7 @@ $$\lambda_j = \sum_{i \in \beta(j)} \lambda_i \frac{\partial f_i (z^i, W^i)}{\pa
 
 where $$ \beta(j) $$ is the set of all incoming edges from the vertex j[^2]
 
-Which is recognizable in the context of backprop as the equation for the the adjoints $$\lambda_ i$$, telling us how to measure the sensitivity of one node relative to the previous layer.  
+Which is recognizable in the context of backprop as the equation for the the adjoints $$\lambda_ i$$, telling us how to measure the sensitivity of one node relative to the previous layer.  Cool.
 ## Origins of TRPO
 Man, bad news homie -- this post is already much longer than I originally intended (and I'm getting *real* tired to typing out LaTex), so maybe I won't go into as much detail about this one. Anyway, It turns out one care arrive at the core of [TRPO](https://arxiv.org/pdf/1502.05477.pdf) algorithm in reinforcement learning under a similar scheme. I'll try to lay crux out briefly:
 

@@ -24,7 +24,7 @@
 &lt;p&gt;To reiterate the distribution must also satisfy the finite mean and finite variance constraints, explicitly:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Constraint 0&lt;/strong&gt; :Probability density function must some to 1:  \(\int_{-\infty}^{\infty}p(x)dx = 1\)&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Constraint 0&lt;/strong&gt; :Probability density function must sum to 1:  \(\int_{-\infty}^{\infty}p(x)dx = 1\)&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Constraint 1&lt;/strong&gt; :Finite mean:  \(\int_{-\infty}^{\infty}p(x)xdx = \mu\)&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Constraint 2&lt;/strong&gt; :Finite variance: \(\int_{-\infty}^{\infty}p(x)\left(x-\mu\right)^2dx = \sigma\)&lt;/li&gt;
 &lt;/ul&gt;
@@ -56,7 +56,7 @@
 
 \[P(x) = \frac{1}{\sqrt{2\pi \sigma^2}} exp\left(-\frac{(x-mu)^2}{2 \sigma^2}\right)\]
 
-&lt;p&gt;The Gaussian distribution at last. To recap, by framing our original question as a constrained optimization problem we were able to arrive at the gaussian distribution in a pretty natural way.&lt;/p&gt;
+&lt;p&gt;The Gaussian distribution at last. To recap, by framing our original question as a constrained optimization problem we were able to retrieve the gaussian distribution in a natural sort of way.&lt;/p&gt;
 
 &lt;h2 id=&quot;origins-of-backprop&quot;&gt;Origins of Backprop&lt;/h2&gt;
 &lt;p&gt;It turns out we can reframe back-propagation in a &lt;a href=&quot;http://yann.lecun.com/exdb/publis/pdf/lecun-88.pdf&quot;&gt;similar fashion&lt;/a&gt;. Ultimately, supervised learning is about minimizing the error between some labeled data \(Y\) and our model’s predictions, usually given by the last layer of our neural network \(Z^L\).&lt;/p&gt;
@@ -87,7 +87,7 @@
 
 &lt;p&gt;where \(\beta(j)\) is the set of all incoming edges from the vertex j&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
-&lt;p&gt;Which is recognizable in the context of backprop as the equation for the the adjoints \(\lambda_ i\), telling us how to measure the sensitivity of one node relative to the previous layer.&lt;/p&gt;
+&lt;p&gt;Which is recognizable in the context of backprop as the equation for the the adjoints \(\lambda_ i\), telling us how to measure the sensitivity of one node relative to the previous layer.  Cool.&lt;/p&gt;
 &lt;h2 id=&quot;origins-of-trpo&quot;&gt;Origins of TRPO&lt;/h2&gt;
 &lt;p&gt;Man, bad news homie – this post is already much longer than I originally intended (and I’m getting &lt;em&gt;real&lt;/em&gt; tired to typing out LaTex), so maybe I won’t go into as much detail about this one. Anyway, It turns out one care arrive at the core of &lt;a href=&quot;https://arxiv.org/pdf/1502.05477.pdf&quot;&gt;TRPO&lt;/a&gt; algorithm in reinforcement learning under a similar scheme. I’ll try to lay crux out briefly:&lt;/p&gt;
 
