@@ -92,7 +92,7 @@ where $$ \beta(j) $$ is the set of all incoming edges from the vertex j[^2]
 
 Which is recognizable in the context of backprop as the equation for the the adjoints $$\lambda_ i$$, telling us how to measure the sensitivity of one node relative to the previous layer.  Cool.
 ## Origins of TRPO
-Man, bad news homie -- this post is already much longer than I originally intended (and I'm getting *real* tired to typing out LaTex), so maybe I won't go into as much detail about this one. Anyway, It turns out one care arrive at the core of [TRPO](https://arxiv.org/pdf/1502.05477.pdf) algorithm in reinforcement learning under a similar scheme. I'll try to lay crux out briefly:
+Man, bad news homie -- this post is already much longer than I originally intended (and I'm getting *real* tired to typing out LaTex), so maybe I won't go into as much detail about this one. Anyway, It turns out one can arrive at the core of [TRPO](https://arxiv.org/pdf/1502.05477.pdf) algorithm in reinforcement learning under a similar scheme. I'll try to lay out the crux briefly:
 
 [Reinforcement learning](https://lilianweng.github.io/lil-log/2018/02/19/a-long-peek-into-reinforcement-learning.html) fundamentally differs from supervised learning in some important ways. Particularly, in the supervised learning case your samples are drawn i.i.d from some underlying distribution and therefore it ultimately doesn't really matter if you sample from a "bad" (low reward) region of your parameter space in one batch, because your next batch will not be conditioned on the poor performing batch in any way. The issue in reinforcement learning[^3] is that this sampling i.i.d assumption no longer holds, precisely because your policy ultimately also *controls* your sampling process; your policy both learns from your samples and is responsible for gathering new samples.
 
@@ -103,7 +103,9 @@ $$\theta' \leftarrow  \arg\max_{\theta} (\theta' - \theta)^T \nabla J(\theta) $$
 $$ s.t \quad ||\theta' - \theta || ^2 \leq \epsilon $$
 
 
-In reality, however we don't have much reason to expect this to be meaningful since some parameters might change much more quickly or slowly than others. Ultimately what we care about isn't *really* that the parameters that control out policy be bounded from one update to the next, it's that change in the policy *itself* be bounded. One way to do this is instead of restricting the gradients, we  should restrict the [KL Divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence) between the policy and it's update to be bound by some epsilon ball. Sure sounds like a constrained optimization problem don't it? 😉
+In reality, however we don't have much reason to expect this to be meaningful since some parameters might change much more quickly or slowly than others. Ultimately what we care about isn't *really* that the parameters that control out policy be bounded from one update to the next, it's that change in the policy *itself* be bounded. 
+
+We'd like to find a way to restrict our policy updates that isn't explicitly dependent on whatever parametrization we used. One way to do this is instead of restricting the gradients, we  should restrict the [KL Divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence) between the policy and it's update to be bound by some epsilon ball. Sure sounds like a constrained optimization problem don't it? 😉
 
 
 ---
