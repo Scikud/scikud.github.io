@@ -9,6 +9,39 @@
     
         
             <item>
+                <title>No, less isn't more, more is more?</title>
+                <link>http://localhost:4000/openai/2020/12/04/compute/</link>
+                <content:encoded>
+                    <![CDATA[
+                    <p>Over the past two weeks, I’ve been thinking more about which research direction I’d like to pursue for the remainder of the scholar’s program. In this post ,I’d like to just outline just the motivating question without much exposition about my approach. I don’t want to spend too much time talking about my research direction just yet largely because I’m still searching for mechanisms to think more clearly about these issues.</p>
+
+<p><strong>Broad context</strong>. One thing in particular that’s struck me (as an effect of being witness to some of the work being undertaken at OpenAI) is a massive asymmetry in compute budgets. State of the art models are typically trained on massive multi-GPU clusters and then subsequently deployed on machines with significantly smaller computational capacity. While this may be desirable for edge or on-device computing, an interesting question to ask is whether or not this represents an inefficient underutilization of the computational resources.</p>
+
+<p><em>If we’re being clever can create constructions such that smaller adaptive models can instead leverage test time compute to overcome the handicap of having a smaller number of learnable parameters?</em></p>
+
+<p>Broadly, I actually don’t think that simply scaling learning models will lead to the most qualitative gains in the expressiveness and generality of machine intelligence. However, in accordance to the <a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">bitter lesson</a> thinking about mechanisms that allow all the computation available to us to be more optimally be allocated is certainly a deeply useful endeavor.</p>
+
+<p>Generally, I believe there’s a great deal of utility in thinking more explicitly about compute budgets as a fundamental part of the broader optimization problem we attempt to solve when constructing machine learning models. Explicitly, given a fixed computational budget how do we optimize that budget between our training and test time regimes?  This question takes increasing precedence when you operate at the scale of OpenAI.  In some sense active learning is one perspective to approach this question (e.g which subsets of the internet should you train your GPT-X model, keeping in mind that determining those subsets also comes from your compute budget).  More speculatively, other approaches seem to implicitly relate to this question of  iterative improvement/test time compute as well, particularly Hebbian learning approaches, or latent variable energy models.</p>
+
+<p>Anywho, that’s all for now. Catch you on the flip.</p>
+
+<p>–</p>
+
+                    ]]>
+                </content:encoded>
+                <guid isPermaLink="false">/openai/2020/12/04/compute/</guid>
+                <description>
+                    
+                    Who doesn't love maximalism?
+                    
+                </description>
+                <pubDate>Fri, 04 Dec 2020 04:56:29 -0800</pubDate>
+                <author>Kudzo Ahegbebu</author>
+            </item>
+        
+    
+        
+            <item>
                 <title>Reframe/Reparametrize</title>
                 <link>http://localhost:4000/openai/2020/11/22/reframe-reparametrize/</link>
                 <content:encoded>

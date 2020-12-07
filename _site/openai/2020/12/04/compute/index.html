@@ -4,19 +4,19 @@
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Say Hello &#8211; ForceMultiplied</title>
+    <title>No, less isn't more, more is more? &#8211; ForceMultiplied</title>
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//maxcdn.bootstrapcdn.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content=".">
+    <meta name="description" content="Who doesn't love maximalism?">
     <link rel="manifest" type="application/manifest+json; charset=utf-8" href="/manifest.json" />
     <meta name="robots" content="all">
     <meta name="author" content="Kudzo Ahegbebu">
     
-    
-    <link rel="canonical" href="http://localhost:4000/contact/">
+    <meta name="keywords" content="OpenAI">
+    <link rel="canonical" href="http://localhost:4000/openai/2020/12/04/compute/">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for ForceMultiplied" href="/feed.xml" />
 
     <!-- Custom CSS -->
@@ -40,18 +40,18 @@
     <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Say Hello">
+    <meta property="og:title" content="No, less isn't more, more is more?">
     <meta property="og:description" content=".">
-    <meta property="og:url" content="http://localhost:4000/contact/">
+    <meta property="og:url" content="http://localhost:4000/openai/2020/12/04/compute/">
     <meta property="og:site_name" content="ForceMultiplied">
     
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     
-    <meta name="twitter:title" content="Say Hello" />
-    <meta name="twitter:description" content="." />
-    <meta name="twitter:url" content="http://localhost:4000/contact/" />
+    <meta name="twitter:title" content="No, less isn't more, more is more?" />
+    <meta name="twitter:description" content="Who doesn't love maximalism?" />
+    <meta name="twitter:url" content="http://localhost:4000/openai/2020/12/04/compute/" />
     
 
     <!-- Icons -->
@@ -110,7 +110,7 @@
     
     
     
-        <a class="nav-active" href="/contact/">Say Hello</a>
+        <a class="nav-link" href="/contact/">Say Hello</a>
     
 
     
@@ -196,36 +196,47 @@
 
     <div class="post p2 p-responsive wrap" role="main">
       <div class="measure">
-        <div class="post">
-  <header class="post-header">
-    <h1 class="h2">Say Hello</h1>
-  </header>
-  <article class="post-content">
-  <div class="py2">
-  
-    <form action="https://formspree.io/scikud@gmail.com" method="POST" class="form-stacked">
-      <label>
-        Email
-        <input type="text" name="email" class="field-light" placeholder="Email Address">
-      </label>
-      <label>
-        Content
-        <textarea type="text" name="content" class="field-light" rows="5" placeholder="What would you like to say?" style="resize: vertical"></textarea>
-      </label>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  type="text/javascript"></script>
 
-      <input type="hidden" name="_next" value="/thanks/" />
-      <input type="hidden" name="_subject" value="New submission!" />
-      <input type="text" name="_gotcha" style="display:none" />
 
-      <input type="submit" class="button button-blue button-big mobile-block" value="Say Hello">
-    </form>
+
+<div class="post-header mb2">
+  <h1>No, less isn't more, more is more?</h1>
+  <span class="post-meta">Dec 4, 2020</span><br>
   
+  <span class="post-meta small">
+    
+    2 minute read
+    
+  </span>
 </div>
 
+<article class="post-content">
+  <p>Over the past two weeks, I’ve been thinking more about which research direction I’d like to pursue for the remainder of the scholar’s program. In this post ,I’d like to just outline just the motivating question without much exposition about my approach. I don’t want to spend too much time talking about my research direction just yet largely because I’m still searching for mechanisms to think more clearly about these issues.</p>
+
+<p><strong>Broad context</strong>. One thing in particular that’s struck me (as an effect of being witness to some of the work being undertaken at OpenAI) is a massive asymmetry in compute budgets. State of the art models are typically trained on massive multi-GPU clusters and then subsequently deployed on machines with significantly smaller computational capacity. While this may be desirable for edge or on-device computing, an interesting question to ask is whether or not this represents an inefficient underutilization of the computational resources.</p>
+
+<p><em>If we’re being clever can create constructions such that smaller adaptive models can instead leverage test time compute to overcome the handicap of having a smaller number of learnable parameters?</em></p>
+
+<p>Broadly, I actually don’t think that simply scaling learning models will lead to the most qualitative gains in the expressiveness and generality of machine intelligence. However, in accordance to the <a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">bitter lesson</a> thinking about mechanisms that allow all the computation available to us to be more optimally be allocated is certainly a deeply useful endeavor.</p>
+
+<p>Generally, I believe there’s a great deal of utility in thinking more explicitly about compute budgets as a fundamental part of the broader optimization problem we attempt to solve when constructing machine learning models. Explicitly, given a fixed computational budget how do we optimize that budget between our training and test time regimes?  This question takes increasing precedence when you operate at the scale of OpenAI.  In some sense active learning is one perspective to approach this question (e.g which subsets of the internet should you train your GPT-X model, keeping in mind that determining those subsets also comes from your compute budget).  More speculatively, other approaches seem to implicitly relate to this question of  iterative improvement/test time compute as well, particularly Hebbian learning approaches, or latent variable energy models.</p>
+
+<p>Anywho, that’s all for now. Catch you on the flip.</p>
+
+<p>–</p>
+
+</article>
 
 
-  </article>
-</div>
+
+
+
+
+
+
+
 
       </div>
     </div>
