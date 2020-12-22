@@ -7,6 +7,47 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>I may need to rethink things...</title>
+        <description>&lt;p&gt;One of the particularly fascinating things i’ve encountered during NEURIPS 2020 was a workshop on deep implicit layers that raises some questions about the nature of my current project proposal for the OpenAI scholars program. While I highly recommend checking out the &lt;a href=&quot;http://implicit-layers-tutorial.org/&quot;&gt;tutorial&lt;/a&gt; and working through the main ideas for yourself, I’ll try to super briefly outline the principle argument and method. All figures in this post are &lt;a href=&quot;https://arxiv.org/pdf/1909.01377.pdf&quot;&gt;stolen from their work&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Deep equilibrium models are built on top 3 ideas.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Implicit layers are more expressive than explicit layers. That is, instead of having layers that express how to calculate a model’s output from its input we can instead specify which conditions we would like for a model’s output and input to satisfy. This has a number of attractive properties (all worthy of an entire blog post) but prime among them is the nice property of decoupling a model’s solution from the procedure that generates it.&lt;/li&gt;
+  &lt;li&gt;Feedforward models can be represented by an equivalent weight-tied recurrent back-propagation model which they call a deep equilibrium model.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/iterativeModel.png&quot; alt=&quot;iterativeModel&quot; /&gt;&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Deep equilibrium models can be constructed such that they converge to a fixed point. What’s particularly dope is that this property combined with the decoupling property talked about above ultimately lets you plug in your models dynamics into any black box optimizer.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The upshot, is that the &lt;a href=&quot;https://en.wikipedia.org/wiki/Implicit_function_theorem&quot;&gt;implicit function theorem&lt;/a&gt; gives a really nice way of computing gradients near fixed points without having to store the usual intermediaries you would if you were computing and storing the computational graph using standard auto-differentiation. This allows for some fairly massive reductions in the memory requirements for equivalently sized models.  What’s interesting is to measure the performance of DEQ models when compared to more traditional single pass feed forward models.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/deqPerformance.png&quot; alt=&quot;iterativeModel&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In some sense these deep equilibrium models can be thought of as deep networks with infinite depth since they’re iteratively evaluated until their output reaches convergence up to some tolerance threshold. The troubling question this raises for the research and my project proposal research is whether a DEQ represents the limits of what’s possible vis-à-vis iterative refinement. To rephrase, if the principal idea in my work is that it may be possible to continually and iteratively improve performance of smaller models by more optimally leveraging test time compute, then the fixed point of DEQ models may represent the upper bound of iterative application.&lt;/p&gt;
+
+&lt;p&gt;To be sure, even if DEQs do represent some performance limit for fixed parameter models there still exist fascinating questions to be asked here nonetheless. Why are the performances gains so marginal? How does the performance of DEQ models change with task algorithmic complexity? &lt;em&gt;etc, etc…&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;To be honest, I’m still not sure how to grapple with any of these issues, or whether these are signs that perhaps I should consider alternative proposals. For now, my two pronged approach is as follows&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Fail Fast Tests:&lt;/strong&gt; Make these questions more concrete by examining the performance of recursive transformers and external memory models on tasks we believe test time compute will actually make a difference.  Thus far i’ve constructed  a set of simple algorithmic tasks (i’ll soon make these available on github). The motivation here is to quickly gauge for signs of life in this work.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Explore EBM backup plan&lt;/strong&gt; As far as I can tell, test time compute paradigm actually seems to be more at home in the energy based model framework where the idea is that you characterize an energy function that parametrizes the correspondence between your input and output. At inference, you then search for an output that minimizes the energy function (using gradient descent if the latent space is continuous) using any standard optimization technique of choice. Consequently, as a backup I’m also reviewing the EBM literature to build familiarity with this space.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Anywho that’s enough rambling for now. Catch you on the flip.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 20 Dec 2020 04:56:29 -0800</pubDate>
+        <link>http://localhost:4000/openai/2020/12/20/troubles/</link>
+        <guid isPermaLink="true">http://localhost:4000/openai/2020/12/20/troubles/</guid>
+      </item>
+    
+      <item>
         <title>No, less isn't more, more is more?</title>
         <description>&lt;p&gt;Over the past two weeks, I’ve been thinking more about which research direction I’d like to pursue for the remainder of the scholar’s program. In this post ,I’d like to just outline just the motivating question without much exposition about my approach. I don’t want to spend too much time talking about my research direction just yet largely because I’m still searching for mechanisms to think more clearly about these issues.&lt;/p&gt;
 
