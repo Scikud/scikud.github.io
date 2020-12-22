@@ -17,8 +17,8 @@
 
 <p>Deep equilibrium models are built on top 3 ideas.</p>
 <ol>
-  <li>Implicit layers are more expressive than explicit layers. That is, instead of having layers that express how to calculate a model’s output from its input we can instead specify which conditions we would like for a model’s output and input to satisfy. This has a number of attractive properties (all worthy of an entire blog post) but prime among them is the nice property of decoupling a model’s solution from the procedure that generates it.</li>
-  <li>Feedforward models can be represented by an equivalent weight-tied recurrent back-propagation model which they call a deep equilibrium model.</li>
+  <li>Implicit layers are more expressive than explicit layers. That is, instead of having layers that express how to calculate a model’s output from its input we can instead specify which conditions we would like for a model’s output and input to jointly satisfy. This has a number of attractive properties (all worthy of an entire blog post) but prime among them is the nice property of decoupling a model’s solution from the procedure that generates it.</li>
+  <li>Feedforward models can be represented by an equivalent, weight-tied, recurrent back-propagation model which they call a deep equilibrium model.</li>
 </ol>
 
 <p style="text-align: center;"><img src="/images/iterativeModel.png" alt="iterativeModel" /></p>
