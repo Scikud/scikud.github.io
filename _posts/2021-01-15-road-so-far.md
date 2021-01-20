@@ -13,7 +13,7 @@ categories: OpenAI
 
  *If we're being clever can we create constructions such that smaller adaptive models can instead leverage test time compute to overcome the handicap of having a smaller number of learnable parameters?*
 
- For deep learning models there seems exists an asymmetry between training and inference (test time) compute. State of the art models are typically trained with large compute budgets and subsequently deployed on machines which use significantly smaller computational resources. Does this represent an inefficient underutilization of computation? Put succinctly: are there ways to remedy the asymmetry of training vs test compute? Given the constraints of limited training compute budget, can small adaptive models instead leverage test time compute to overcome the handicap of having a smaller number of learnable parameters?  
+ For deep learning models there seems exists an asymmetry between training and inference (test time) compute. State of the art models are typically trained with large compute budgets and subsequently deployed on machines which use significantly smaller computational resources. Does this represent an inefficient underutilization of computation? Put succinctly: are there ways to remedy the asymmetry of training vs test compute? 
  
  Anthropomorphically, I think there's good motivation here. After all, given more time to think, humans generally tend to produce higher quality answers- perhaps by spending those additional cognitive resources on resolving ambiguity.
 
@@ -44,5 +44,5 @@ Above, I plot performance for different sized architectures.  Notice that traini
 
 ### To be continued
 
-There's quite a bit going through my head currently. I'm devising better means to instrument what's going on with this dataset as well as mechanisms to actually extract performance with increases in test time compute from other models using other paradigms. Above all, while i'm bullish on the idea of test time compute, I still have deep doubts about the kludgyness and crudity of my methods. I would like leave you with something more cogent, more coherent and more insightful but for now i'm stumbling around in the darkness. Anyway, that's it for now. Catch you on the flip.  
+There's quite a bit going through my head currently. I'm devising better means to instrument what's going on with this dataset as well as mechanisms to actually extract performance with increases in test time compute from other models using other paradigms. Above all, while i'm bullish on the idea of test time compute, I still have deep doubts about the kludgyness and crudity of my methods. I would like to leave you with something more cogent, more coherent, and more insightful but for now i'm stumbling around in the darkness. Anyway, that's it for now. Catch you on the flip.  
 
