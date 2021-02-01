@@ -20,7 +20,7 @@
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for ForceMultiplied" href="/feed.xml" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/pixyll.css?202102011014" type="text/css">
+    <link rel="stylesheet" href="/css/pixyll.css?202102011030" type="text/css">
 
     <!-- Fonts -->
     
@@ -228,9 +228,9 @@
 
 <p>The second thing i’d like to leave you with is this cool, (new to me) fixed point solver method called Anderson Acceleration. In traditional fixed point stuff you’re trying to solve a  \(f(c) = c\) type equation. The boring way is to just choose some initial point \(x_0\) and continue iteration with \(x_{i+1} =f(x_0)\) until you find some point where the residual \(x_{i+1} - x_{i}\) is lower than some tolerance threshold or you’ve maxed out your number of allowed iterations.</p>
 
-<p>This is fine if you’re lame and you’re function isn’t computationally expensive. But if iterating your function is itself a pain you’d like to find some way to accelerate the convergence to a fixed point. You could use Newton’s method which certainly has faster convergence, but then you have to compute Jacobians. However, if you’re function is computationally expensive, evaluating Jacobians is going to be computationally prohibitive as well. Again no fun.</p>
+<p>This is fine if you’re lame and your function isn’t computationally expensive. But if iterating your function is itself a pain you’d like to find some way to accelerate the convergence to a fixed point. You could use Newton’s method which certainly has faster convergence, but then you have to compute Jacobians. However, if you’re function is computationally expensive, evaluating Jacobians is going to be computationally prohibitive as well. Again no fun.</p>
 
-<p>Apparently, all the cool kids have been using something called “Anderson Acceleration” which aims to accelerate the convergence of fixed point iteration. At its core its’ basically like a finite difference secant method.  Instead of just using the previous guess to compute the next guess, we instead take a linear combination of the past \(m\) points. That is</p>
+<p>Apparently, all the cool kids have been using something called “Anderson Acceleration” which aims to accelerate the convergence of fixed point iteration. At its core its basically like a finite difference secant method.  Instead of just using the previous guess to compute the next guess, we instead take a linear combination of the past \(m\) points. That is</p>
 
 \[x_{k+1} = \sum^{m_k}_{i=0}(\alpha_k)_if(x_{k-m_k+i})\]
 
