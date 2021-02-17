@@ -7,6 +7,40 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Updating my views</title>
+        <description>&lt;p&gt;This past week, i’ve been playing around with implementing a feedback transformer as well as improving some of the baselines i’ve constructed. Lots of ongoing work on those fronts I don’t particularly feel like writing about now. While explaining some of the things I’ve been working on to someone recently, I realized the way I think about the directionality of machine learning in aggregate has changed. The following post is largely a reconstruction of that conversation.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-current-state-of-affairs&quot;&gt;The current state of affairs&lt;/h2&gt;
+&lt;p&gt;Let’s say we’d like to create a machine learning algorithm, particularly a neural network that learns some specific algorithm – say Dijkstra’s. Now, if the idea of creating a neural network to haphazardly implement a shitty approximation of a well know existing algorithm seems contrived,that’s because it is- but stick with me I’m making a rhetorical point. Anyway, In order to carry out this task in the modern machine learning paradigm one is resigned to the somewhat tedious task of either finding or creating datasets that are sufficiently large and sufficiently expressive in the hopes of capturing enough complexity for your neural network to learn the algorithm you care about.&lt;/p&gt;
+
+&lt;p&gt;Paired with the increasing ubiquity of machine learning models&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; themselves this seems to shift the task of learning the algorithm largely into the domain of data set engineering, i.e more specifically the problem of gathering and altering datasets (&lt;a href=&quot;https://medium.com/@karpathy/software-2-0-a64152b37c35&quot;&gt;Andrej’s famous Software 2.0&lt;/a&gt;). In practice however, we usually find that the model finds it much easier to learn features specific to it’s training dataset rather than general features of the problem domain you actually care about.  Again we run into the orignal issue; in order to even learn a relatively straightforward general algorithm we’re forced to  either hamfist what we believe to be good inductive priors into our model or find/create exquisitely curated datasets that capture all the nuance we would like our model’s outputs to capture. In the context of the current machine learning paradigm, for all interesting problems it seems exceedingly unlikely that such curation is possible; there seems to be some critical &lt;em&gt;general&lt;/em&gt; ingredient missing.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-i-thought-would-work&quot;&gt;What I thought would work&lt;/h3&gt;
+&lt;p&gt;In response to this, my initial thoughts around test time compute went something like this : Maybe by more explicitly baking in compute at test time (baking in recurrence back in transformers etc), we could make it easier for our models to favor leveraging the additional computation over simply recognizing spurious patterns in the dataset. The results of the (admittedly naive) experiments I’ve been running are still TBD but in general the trend seems to be that this only helps in particular contexts, and even then the benefits aren’t super pronounced.
+What does seem a little clear now is that what I’ve been doing thus far amounts to something like a fancy form of regularization.&lt;/p&gt;
+
+&lt;h3 id=&quot;score-models&quot;&gt;Score models?&lt;/h3&gt;
+&lt;p&gt;The problematic bit seems to be that using more compute at test time is only useful if your network’s learning procedure actually is able to imbue it with some mechanism to make efficient use of this additional computation.  One way to make this  explicit is to incorporate a discriminator into our generative mechanism. At the beginning of this project, I chose to not pursue this direction because at the moment it didn’t seem sufficiently general. Now however, the question that keeps popping up in the back of my head is whether it’s impossible to actually construct a model that continually refines the quality and fidelity of its outputs without it also implicitly learning something roughly isometric to a discriminator or some sort of energy minimization mechanism.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-does-the-future-hold&quot;&gt;What does the future hold&lt;/h3&gt;
+&lt;p&gt;I’m not sure at all where to go with all of this. The asymmetry between how comparatively easy it is to recognize a good solution to some problem and the difficulty in actually generating these solutions would seem to suggest we invest our efforts into mechanisms that learn score like correspondences between inputs and outputs and then deploy search mechanisms at test time to steer themselves to  increasingly more fit outputs.  Importantly, the idea i’m trying to convey here is that if what we care about is learning how to reason, rather than learning how to solve particular datasets then  what we should care about is not the outputs themselves  but rather the search mechanisms used to operate over this score landscape. Anyway, that’s it for now. TTYL ✌️&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://arxiv.org/abs/1706.05137 &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Fri, 12 Feb 2021 04:56:29 -0800</pubDate>
+        <link>http://localhost:4000/openai/2021/02/12/21-ml-thoughts/</link>
+        <guid isPermaLink="true">http://localhost:4000/openai/2021/02/12/21-ml-thoughts/</guid>
+      </item>
+    
+      <item>
         <title>On Fixed points</title>
         <description>&lt;h3 id=&quot;some-thoughts&quot;&gt;Some thoughts&lt;/h3&gt;
 &lt;p&gt;This week, i’ve been building out an implementation of a deep equilibrium model as a means to explore some of the ideas centering around test time compute. I’ve talked about deep equilibrium models&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; briefly in &lt;a href=&quot;https://scikud.github.io/openai/2020/12/20/troubles/&quot;&gt;another post&lt;/a&gt;, so I won’t spend too much time here going over them, but generally the thesis is that any multilayer neural network could be represented by a single layer weight tied recurrent net and that if we perform repeated forward iteration for most “real” architectures this recurrent weight tied net tends to converge to a fixed point. It’s an interesting idea, though the universality argument seems fine the expressivity and representational power of the fixed point seems to be a little dubious.&lt;/p&gt;
