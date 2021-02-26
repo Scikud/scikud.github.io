@@ -9,14 +9,182 @@
     
         
             <item>
+                <title>Crunchtime</title>
+                <link>http://localhost:4000/openai/2021/02/25/feedback-transformer/</link>
+                <content:encoded>
+                    <![CDATA[
+                    <h3 id="utility-functions">Utility functions</h3>
+<p>I’ve spent the past week writing some desperately neeeded utility functions to instrument the code that i’ve built out as part of the scholar’s program. Largely, i’ve been trying to gain a better understanding of exactly what’s going on inside these models as they operate over data continously. One lesson learned is on the importance of writing utility functions early, not only because it saves you valuable time when approaching deadlines, but also because being really explicit up front about the kind of data you would like to collect also informs what kind of experiments your’e likely to run.</p>
+
+<h3 id="feedback-transformer">Feedback Transformer</h3>
+<p>Last blog post, I mentioned I’ve been playing around with implementing the feedback transformer. The principle idea in the feedback transformer is to allow low level representation in transformers to attend to previous higher level representations. This modifies the computational path of the the traditional transformer architecture and transforms it something functionally resembelling an autoregressive RNN. I wrote out a quick and dirty implementation for this (below), which I’ll clean up and post on github at some point, along with the million other things I have to catch up on.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MultiHeadedAttn</span><span class="p">(</span><span class="nx">nn</span><span class="p">.</span><span class="nx">Module</span><span class="p">):</span>
+    <span class="nx">def</span> <span class="nx">__init__</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">Config</span><span class="p">):</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">MultiHeadedAttn</span><span class="p">,</span> <span class="nb">self</span><span class="p">).</span><span class="nx">__init__</span><span class="p">()</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Config</span>
+        <span class="err">#</span> <span class="nx">Generates</span> <span class="nx">queries</span><span class="p">,</span> <span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">fc1</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">qkvSize</span><span class="p">)</span><span class="o">*</span><span class="nx">c</span><span class="p">.</span><span class="nx">numAttnHeads</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">fc2</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">)</span>
+        <span class="err">#</span> <span class="nx">Create</span> <span class="nx">Mask</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">register_buffer</span><span class="p">(</span>
+            <span class="dl">"</span><span class="s2">causalMask</span><span class="dl">"</span><span class="p">,</span>
+            <span class="nx">torch</span><span class="p">.</span><span class="nx">tril</span><span class="p">(</span><span class="nx">torch</span><span class="p">.</span><span class="nx">ones</span><span class="p">((</span><span class="nx">c</span><span class="p">.</span><span class="nx">blockSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">blockSize</span><span class="p">))))</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">register_buffer</span><span class="p">(</span>
+            <span class="dl">"</span><span class="s2">padMask</span><span class="dl">"</span><span class="p">,</span>
+            <span class="nx">torch</span><span class="p">.</span><span class="nx">ones</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">blockSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">blockSize</span><span class="p">))</span>
+
+    <span class="nx">def</span> <span class="nx">forward</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">):</span>
+        <span class="nx">B</span><span class="p">,</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">embdSize</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">shape</span>  <span class="err">#</span> <span class="nx">B</span> <span class="o">=</span><span class="nx">Batch</span> <span class="nx">size</span><span class="p">,</span>  <span class="nx">T</span> <span class="o">=</span> <span class="nx">numTokens</span>
+        <span class="nx">h</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">numAttnHeads</span>
+
+        <span class="nx">q</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">fc1</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+        <span class="nx">q</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">reshape</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span><span class="nx">h</span><span class="p">,</span><span class="nx">T</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nx">k</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">reshape</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span><span class="nx">h</span><span class="p">,</span><span class="nx">T</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nx">v</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">reshape</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span><span class="nx">h</span><span class="p">,</span><span class="nx">T</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="err">#</span> <span class="nx">God</span> <span class="nx">bless</span> <span class="nx">einsum</span>
+        <span class="nx">attn</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">einsum</span><span class="p">(</span><span class="dl">'</span><span class="s1">bhij,bhkj-&gt;bhik</span><span class="dl">'</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span>
+        <span class="nx">mask</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">unsqueeze</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nx">padMasks</span><span class="p">,</span> <span class="mi">1</span><span class="p">).</span><span class="nx">repeat</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[...,</span> <span class="p">:</span><span class="nx">T</span><span class="p">,:</span><span class="nx">T</span><span class="p">]</span> <span class="o">*</span><span class="nb">self</span><span class="p">.</span><span class="nx">causalMask</span><span class="p">[:</span><span class="nx">T</span><span class="p">,</span> <span class="p">:</span><span class="nx">T</span><span class="p">]</span>
+        <span class="nx">attn</span> <span class="o">=</span> <span class="nx">attn</span><span class="p">.</span><span class="nx">masked_fill</span><span class="p">(</span><span class="nx">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">.,</span> <span class="nx">float</span><span class="p">(</span><span class="dl">'</span><span class="s1">-inf</span><span class="dl">'</span><span class="p">))</span>
+        <span class="nx">scores</span> <span class="o">=</span> <span class="nx">F</span><span class="p">.</span><span class="nx">softmax</span><span class="p">(</span><span class="nx">attn</span><span class="o">/</span><span class="nx">np</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">qkvSize</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nx">outpt</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">einsum</span><span class="p">(</span><span class="dl">'</span><span class="s1">bhij,bhjk-&gt;bhik</span><span class="dl">'</span><span class="p">,</span> <span class="nx">scores</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">outpt</span> <span class="o">=</span> <span class="nx">outpt</span><span class="p">.</span><span class="nx">view</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">embdSize</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="nx">fc2</span><span class="p">(</span><span class="nx">outpt</span><span class="p">)</span>
+
+
+<span class="kd">class</span> <span class="nx">DecoderBlock</span><span class="p">(</span><span class="nx">nn</span><span class="p">.</span><span class="nx">Module</span><span class="p">):</span>
+    <span class="nx">def</span> <span class="nx">__init__</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">config</span><span class="p">):</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">DecoderBlock</span><span class="p">,</span> <span class="nb">self</span><span class="p">).</span><span class="nx">__init__</span><span class="p">()</span>
+        <span class="nx">c</span> <span class="o">=</span> <span class="nx">config</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">ln1</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">LayerNorm</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">attn</span> <span class="o">=</span> <span class="nx">MultiHeadedAttn</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">mlp</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Sequential</span><span class="p">(</span>
+            <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="o">*</span><span class="mi">4</span><span class="p">),</span>
+            <span class="nx">nn</span><span class="p">.</span><span class="nx">GELU</span><span class="p">(),</span>
+            <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">ln2</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">LayerNorm</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">_setPadMasks</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">padMasks</span><span class="p">):</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">attn</span><span class="p">.</span><span class="nx">padMasks</span> <span class="o">=</span> <span class="nx">padMasks</span>
+        
+    <span class="nx">def</span> <span class="nx">forward</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">):</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">ln1</span><span class="p">(</span><span class="nx">x</span><span class="o">+</span><span class="nb">self</span><span class="p">.</span><span class="nx">attn</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="nx">k</span><span class="p">,</span><span class="nx">v</span><span class="p">))</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">ln2</span><span class="p">(</span><span class="nx">x</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nx">mlp</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nx">x</span>
+
+
+<span class="kd">class</span> <span class="nx">TinyFeedbackTransformer</span><span class="p">(</span><span class="nx">nn</span><span class="p">.</span><span class="nx">Module</span><span class="p">):</span>
+    <span class="nx">def</span> <span class="nx">__init__</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">Config</span><span class="p">):</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">TinyFeedbackTransformer</span><span class="p">,</span> <span class="nb">self</span><span class="p">).</span><span class="nx">__init__</span><span class="p">()</span>
+        <span class="err">#</span> <span class="nx">Size</span> <span class="nx">assertions</span>
+        <span class="nx">assert</span> <span class="nx">Config</span><span class="p">.</span><span class="nx">embdSize</span> <span class="o">&gt;=</span> <span class="nx">Config</span><span class="p">.</span><span class="nx">numAttnHeads</span>
+
+        <span class="err">#</span> <span class="nx">Configuration</span> <span class="nx">stuff</span>
+        <span class="nx">c</span> <span class="o">=</span> <span class="nx">Config</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">qkvSize</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span> <span class="c1">// c.numAttnHeads</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">c</span>
+
+        <span class="nb">self</span><span class="p">.</span><span class="nx">wordEmbedding</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Embedding</span><span class="p">(</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">paddingIndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="nx">padding_idx</span><span class="o">=</span><span class="nx">c</span><span class="p">.</span><span class="nx">paddingIndx</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">posEmbedding</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Parameter</span><span class="p">(</span>
+            <span class="nx">torch</span><span class="p">.</span><span class="nx">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">blockSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">))</span>
+
+        <span class="err">#</span><span class="nx">New</span> <span class="nx">learnable</span> <span class="nx">parameters</span> <span class="k">for</span> <span class="nx">feedback</span> <span class="nx">transformer</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">memoryCoeff</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Parameter</span><span class="p">(</span><span class="nx">torch</span><span class="p">.</span><span class="nx">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">numLayers</span><span class="p">))</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">ffkv</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">qkvSize</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nx">c</span><span class="p">.</span><span class="nx">numAttnHeads</span><span class="p">)</span>
+
+        <span class="nb">self</span><span class="p">.</span><span class="nx">blocks</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">ModuleList</span><span class="p">(</span>
+            <span class="p">[</span><span class="nx">DecoderBlock</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="k">for</span> <span class="nx">_</span> <span class="k">in</span> <span class="nx">range</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">numLayers</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">ln1</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">LayerNorm</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">embdSize</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">paddingIndx</span><span class="p">,</span> <span class="nx">bias</span><span class="o">=</span><span class="nx">False</span><span class="p">)</span>
+
+        <span class="nb">self</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nx">_init_weights</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">forward</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">indxs</span><span class="p">,</span> <span class="nx">padMasks</span><span class="p">):</span>
+        <span class="k">for</span> <span class="nx">mod</span> <span class="k">in</span> <span class="nb">self</span><span class="p">.</span><span class="nx">blocks</span><span class="p">:</span>
+            <span class="nx">mod</span><span class="p">.</span><span class="nx">_setPadMasks</span><span class="p">(</span><span class="nx">padMasks</span><span class="p">)</span>
+        <span class="nx">numTokens</span> <span class="o">=</span> <span class="nx">indxs</span><span class="p">.</span><span class="nx">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="err">#</span> <span class="nx">Combine</span> <span class="nx">word</span> <span class="nx">and</span> <span class="nx">position</span> <span class="nx">embeddings</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">wordEmbedding</span><span class="p">(</span><span class="nx">indxs</span><span class="p">)</span>
+        <span class="nx">pos</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">posEmbedding</span><span class="p">[:,</span> <span class="p">:</span><span class="nx">numTokens</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="o">+</span><span class="nx">pos</span>
+
+        <span class="err">#</span><span class="nx">Initalize</span> <span class="nx">the</span> <span class="nx">memory</span> <span class="nx">tensor</span>
+        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">tensor</span><span class="p">([]).</span><span class="nx">to</span><span class="p">(</span><span class="nx">device</span><span class="p">)</span>
+        <span class="nx">batchSize</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>        
+        <span class="nx">blockSize</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">blockSize</span>
+        <span class="nx">maxMemSize</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">memorySize</span>
+ 
+
+        <span class="nx">finalOutputs</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">tensor</span><span class="p">([]).</span><span class="nx">to</span><span class="p">(</span><span class="nx">device</span><span class="p">)</span>
+        <span class="err">#</span><span class="nx">Pass</span> <span class="nx">through</span> <span class="nx">the</span> <span class="nx">transformer</span>
+        <span class="k">for</span> <span class="nx">indx</span> <span class="k">in</span> <span class="nx">range</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="nx">currSlice</span> <span class="o">=</span> <span class="nx">x</span><span class="p">[:,</span> <span class="nx">indx</span><span class="p">,</span> <span class="p">...].</span><span class="nx">view</span><span class="p">(</span><span class="nx">batchSize</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="nx">inpt</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">cat</span><span class="p">((</span><span class="nx">memory</span><span class="p">,</span><span class="nx">currSlice</span><span class="p">),</span> <span class="nx">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="nx">inpt</span> <span class="o">=</span> <span class="nx">inpt</span><span class="p">[:,</span> <span class="o">-</span><span class="nx">maxMemSize</span><span class="p">:,</span> <span class="p">...]</span>
+
+            <span class="err">#</span> <span class="nx">Grab</span> <span class="nx">the</span> <span class="nx">W_k</span> <span class="nx">and</span> <span class="nx">the</span> <span class="nx">W_v</span> <span class="nx">parameters</span>
+            <span class="nx">wk</span><span class="p">,</span> <span class="nx">wv</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">ffkv</span><span class="p">(</span><span class="nx">inpt</span><span class="p">).</span><span class="nx">chunk</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="nx">outputs</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">tensor</span><span class="p">([]).</span><span class="nx">to</span><span class="p">(</span><span class="nx">device</span><span class="p">)</span>
+            <span class="k">for</span> <span class="nx">decoderBlock</span> <span class="k">in</span> <span class="nb">self</span><span class="p">.</span><span class="nx">blocks</span><span class="p">:</span>
+                <span class="nx">inpt</span> <span class="o">=</span> <span class="nx">decoderBlock</span><span class="p">(</span><span class="nx">inpt</span><span class="p">,</span> <span class="nx">wk</span><span class="p">,</span> <span class="nx">wv</span><span class="p">)</span>
+                <span class="nx">outputs</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">cat</span><span class="p">((</span><span class="nx">outputs</span><span class="p">,</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">unsqueeze</span><span class="p">(</span><span class="nx">inpt</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span><span class="mi">0</span><span class="p">)))</span>
+            <span class="nx">currmemory</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">einsum</span><span class="p">(</span><span class="dl">'</span><span class="s1">il,lbd-&gt;bd</span><span class="dl">'</span><span class="p">,</span>
+                                      <span class="nx">torch</span><span class="p">.</span><span class="nx">softmax</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nx">memoryCoeff</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nx">outputs</span><span class="p">)</span>
+            
+            <span class="nx">memory</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">cat</span><span class="p">((</span><span class="nx">memory</span><span class="p">,</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">unsqueeze</span><span class="p">(</span><span class="nx">currmemory</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="nx">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="nx">memory</span> <span class="o">=</span> <span class="nx">memory</span><span class="p">[:,</span> <span class="o">-</span><span class="nx">maxMemSize</span><span class="p">:,</span> <span class="p">...]</span>
+            <span class="nx">finalOutputs</span> <span class="o">=</span> <span class="nx">torch</span><span class="p">.</span><span class="nx">cat</span><span class="p">((</span><span class="nx">finalOutputs</span><span class="p">,</span><span class="nx">torch</span><span class="p">.</span><span class="nx">unsqueeze</span><span class="p">(</span><span class="nx">inpt</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span><span class="mi">1</span><span class="p">)),</span> <span class="nx">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nx">finalOutputs</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nx">head</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nx">ln1</span><span class="p">(</span><span class="nx">finalOutputs</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nx">finalOutputs</span>
+
+    <span class="nx">def</span> <span class="nx">_init_weights</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">module</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Embedding</span><span class="p">):</span>
+            <span class="nx">d</span> <span class="o">=</span> <span class="p">(</span><span class="nx">module</span><span class="p">.</span><span class="nx">embedding_dim</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+            <span class="nx">module</span><span class="p">.</span><span class="nx">weight</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">normal_</span><span class="p">(</span><span class="nx">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nx">std</span><span class="o">=</span><span class="mf">0.125</span><span class="o">/</span><span class="nx">d</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">Linear</span><span class="p">):</span>
+            <span class="nx">d</span> <span class="o">=</span> <span class="p">(</span><span class="nx">module</span><span class="p">.</span><span class="nx">in_features</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+            <span class="nx">module</span><span class="p">.</span><span class="nx">weight</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">normal_</span><span class="p">(</span><span class="nx">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nx">std</span><span class="o">=</span><span class="mf">0.125</span><span class="o">/</span><span class="nx">d</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nx">module</span><span class="p">.</span><span class="nx">bias</span> <span class="nx">is</span> <span class="nx">not</span> <span class="nx">None</span><span class="p">:</span>
+                <span class="nx">module</span><span class="p">.</span><span class="nx">bias</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">zero_</span><span class="p">()</span>
+        <span class="nx">elif</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">nn</span><span class="p">.</span><span class="nx">LayerNorm</span><span class="p">):</span>
+            <span class="nx">module</span><span class="p">.</span><span class="nx">bias</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">zero_</span><span class="p">()</span>
+            <span class="nx">module</span><span class="p">.</span><span class="nx">weight</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">fill_</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Anywho, that’s it for now. More to come in the coming weeks if I ever find time to organize my thoughts and my work. TTYL</p>
+
+                    ]]>
+                </content:encoded>
+                <guid isPermaLink="false">/openai/2021/02/25/feedback-transformer/</guid>
+                <description>
+                    
+                    Sharing Some Code
+                    
+                </description>
+                <pubDate>Thu, 25 Feb 2021 04:56:29 -0800</pubDate>
+                <author>Kudzo Ahegbebu</author>
+            </item>
+        
+    
+        
+            <item>
                 <title>Updating my views</title>
-                <link>http://localhost:4000/openai/2021/02/12/21-ml-thoughts/</link>
+                <link>http://localhost:4000/openai/2021/02/12/ml-thoughts/</link>
                 <content:encoded>
                     <![CDATA[
                     <p>This past week, i’ve been playing around with implementing a feedback transformer as well as improving some of the baselines i’ve constructed. Lots of ongoing work on those fronts I don’t particularly feel like writing about now. While explaining some of the things I’ve been working on to someone recently, I realized the way I think about the directionality of machine learning in aggregate has changed. The following post is largely a reconstruction of that conversation.</p>
 
 <h2 id="the-current-state-of-affairs">The current state of affairs</h2>
-<p>Let’s say we’d like to create a machine learning algorithm, particularly a neural network that learns some specific algorithm – say Dijkstra’s. Now, if the idea of creating a neural network to haphazardly implement a shitty approximation of a well known existing algorithm seems contrived,that’s because it is- but stick with me I’m making a rhetorical point. Anyway, In order to carry out this task in the modern machine learning paradigm one is resigned to the somewhat tedious task of either finding or creating datasets that are sufficiently large and sufficiently expressive in the hopes of capturing enough complexity for your neural network to learn the algorithm you care about.</p>
+<p>Let’s say we’d like to create a machine learning algorithm, particularly a neural network that learns some specific algorithm – say Dijkstra’s. Now, if the idea of creating a neural network to haphazardly implement a shitty approximation of a well known existing algorithm seems contrived,that’s because it is- but stick with me I’m making a rhetorical point. Anyway, in order to carry out this task in the modern machine learning paradigm one is resigned to the somewhat tedious task of either finding or creating datasets that are sufficiently large and sufficiently expressive in the hopes of capturing enough complexity for your neural network to learn the algorithm you care about.</p>
 
 <p>Paired with the increasing ubiquity of machine learning models<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup> themselves this seems to shift the task of learning the algorithm largely into the domain of data set engineering, i.e more specifically the problem of gathering and altering datasets (<a href="https://medium.com/@karpathy/software-2-0-a64152b37c35">Andrej’s famous Software 2.0</a>). In practice however, we usually find that the model finds it much easier to learn features specific to it’s training dataset rather than general features of the problem domain you actually care about.  Again we run into the orignal issue; in order to even learn a relatively straightforward general algorithm we’re forced to  either hamfist what we believe to be good inductive priors into our model or find/create exquisitely curated datasets that capture all the nuance we would like our model’s outputs to capture. In the context of the current machine learning paradigm, for all interesting problems it seems exceedingly unlikely that such curation is possible; there seems to be some critical <em>general</em> ingredient missing.</p>
 
@@ -42,7 +210,7 @@ What does seem a little clear now is that what I’ve been doing thus far amount
 
                     ]]>
                 </content:encoded>
-                <guid isPermaLink="false">/openai/2021/02/12/21-ml-thoughts/</guid>
+                <guid isPermaLink="false">/openai/2021/02/12/ml-thoughts/</guid>
                 <description>
                     
                     idk man, stuff
