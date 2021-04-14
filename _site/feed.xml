@@ -7,6 +7,123 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Wrapping Up</title>
+        <description>&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; &lt;em&gt;A recap of my work as part of OpenAI’s scholar’s program. I introduce the ‘test time compute dream’ and recap some of the early ways in which I attempted to explore this problem. I detail how attempts to realize the test time compute dream in the form of baking recurrence back into language models were largely unsuccesful. As a means to find signs of life, I transition to graph neural networks operating over the game of sudoku and find definitive signs of life. I also find that using the machinery from deep equilibrium models to refine the hidden state of a graph neural network works quite well for improving training speed and reducing memory footprint. Additionally, I find that instead of explicitly hand-coding the adjacencies for a graph neural network we can instead use an attention head from a transformer to learn the adjacencies from the raw unstructured data and then train this model end to end via a surrogate loss and reinforcement learning.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;at-long-last&quot;&gt;At long last&lt;/h2&gt;
+&lt;p&gt;Wow, where to begin? The last couple of weeks have been a whirlwind but at long last i’ve arrived at the end of the scholar’s program.&lt;/p&gt;
+
+&lt;p&gt;This blog post will largely be a written version of my presentation with about as much detail.
+To recap, for all two of you who actually read this blog  (hi, mom 👋! ),my scholar’s project has been spent thinking about what i’ll call the test time compute dream. Briefly: 
+&lt;em&gt;Can we construct models that continuously improve their outputs the more compute we pout into them at test time?&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;recurrence-alone-is-inadequate&quot;&gt;Recurrence Alone is Inadequate&lt;/h2&gt;
+&lt;p&gt;Broadly I tend to mentally partition test time compute ideas from literature into two general categories..&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Generalization Improvement mechanisms:&lt;/strong&gt; These deal with the question of whether we can create models that leverage test time compute to learn more general algorithms instead of simple statistical association. Ideally, we’d like for to construct  algorithms that use the extra compute to resolve ambiguity or to refine their outputs using computation they’ve already done or outputs they’ve already produced as new inputs for future time steps. Ideally we would like to have some guarantees that these models are truly computational complete. The Universal Transformer is my canonical example of work in this category.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Efficiency Mechanisms:&lt;/strong&gt; This largely deals with the question of whether we can decouple the amount of time it takes to run a model at inference from the number of parameters a model has. The motivation here is simple; we would like to  increase the representational capacity  of our model by increasing the total number of trainable parameters without simultaneously incurring increased computational penalty for those extra parameters.  Examples of literature of this variety includes eternal memory mechanisms (fast product keys etc)&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;By in large, this project largely focused on the former mechanism.&lt;/p&gt;
+
+&lt;p&gt;Particularly, for the first two thirds of this project I was interested in exploring the generalization properties of test time compute methods in the context of the &lt;a href=&quot;https://github.com/Scikud/cityDataset&quot;&gt;“shortest path dataset”&lt;/a&gt; . I’ve talked about the shortest path set &lt;a href=&quot;https://scikud.github.io/openai/2021/01/15/road-so-far/&quot;&gt;several times on this blog&lt;/a&gt;, so I wont go into too much detail here. The important question being explored was whether, if we control for total training FLOP budget, does a model trained to leverage test time compute (in the form of top layer recurrence) ever approach the performance of a model that doesn’t use this recurrence but perhaps is larger or was trained for more total gradient steps overall.&lt;/p&gt;
+
+&lt;p&gt;The way I did this was by keeping the training budget fixed and then training recurrent models with a fixed number of time steps during training with loss evaluated at every time step and then evaluating those same models with more steps of recurrence at test time. What I was interested in here was whether we ever observe a phase transition whether the extra compute allows these models to catch up with larger models trained without this recurrence.&lt;/p&gt;
+
+&lt;p&gt;Obviously theres much nuance here – the very nature this experiment has questionable foundations – regardless, to the extent to which we can answer the  question above, the answer seems largely to be: &lt;em&gt;not really&lt;/em&gt;. That is, irrespective  of the model type you attempt this scheme on (and I tried a wide array of models indeed) we never observe a phase transition where it becomes favorable to expend your training budget on training a model that uses this recurrence scheme over just training a non recurrent model for more gradient update steps.&lt;/p&gt;
+
+&lt;p&gt;Running a linear probe over the embedding space of these models reveals that they actually learn the locations of the cities fairly quickly (or at the very least something isometric to the locations). The trouble really does appear as though learning some general shortest path finding algorithm seems to be a sufficiently difficult task for all these state of the art models. Even if you argue that cross entropy loss or perplexity is a poor metric to measure performance on something like shortest path, their performance is actually even worse on more &lt;a href=&quot;https://scikud.github.io/openai/2021/01/15/road-so-far/&quot;&gt;sensible metrics&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;To be clear, we really don’t care &lt;em&gt;at all&lt;/em&gt; about actually solving the shortest path task, it exists almost solely as a vessel to explore some of these test time compute generalization properties. The actual, absolute, performance on the dataset is largely irrelevant, what matters is the relative performance between models using test time recurrence and those models not leveraging it.&lt;/p&gt;
+
+&lt;p&gt;These negative findings hold true to domains outside of shortest path as well. Admittedly, the experiments here were much less extensive but this trend seems to be true even for tasks like sorting (even when models are trained with &lt;em&gt;more&lt;/em&gt; than the \(n \log n\) recurrence steps we know are algorithmically sufficient for this domain).  It really does appear as though test time compute in the form of recurrence is insufficient to achieve the generalization properties we seek. More structure is required.&lt;/p&gt;
+
+&lt;h3 id=&quot;graph-neural-networks-to-the-rescue&quot;&gt;Graph Neural Networks to the rescue&lt;/h3&gt;
+&lt;p&gt;In search of this additional structure, I turned to graph neural networks.&lt;/p&gt;
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/GNN_intro.png&quot; alt=&quot;GNNIntroSlide&quot; /&gt;.&lt;/p&gt;
+
+&lt;p&gt;Graph neural networks are neural networks that operate on graph structured data&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;GNNs process this graph by iteratively performing a learned message passing operation between nodes in which the GNN attempts to refine it’s internal representation of the nodes. It does this by using a learned message passing mechanism where at each timestep the hidden state is updated in the following way:&lt;/p&gt;
+
+\[h_i = \phi(\, x_i, \, \bigoplus_{j \in N_i} \psi(x_i, x_j) \,)\]
+
+&lt;p&gt;Above, \(h_i\) is the hidden state for some node i,  and \(x_i\) is the node embedding  for a particular node. Effectively, the update equation specifies that the hidden state at each  layer (or time step in our case) be updated by a function that takes in as inputs the node embedding, and all pairs of that nodes neighbors passed through some message passing function  \(\psi\) and then aggregated using some aggregation function.&lt;/p&gt;
+
+&lt;p&gt;The training regime was done in effectively the exact same way as the shortest model explorations where I force the model to make a prediction &lt;em&gt;at every timestep&lt;/em&gt; and evaluate the loss at &lt;em&gt;every&lt;/em&gt; timestep as well. This is done to ensure that the model is robust to being evaluated at &lt;em&gt;test&lt;/em&gt; time with more evaluations than the model was evaluated with during training time.&lt;/p&gt;
+
+&lt;h3 id=&quot;signs-of-life&quot;&gt;Signs of Life&lt;/h3&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/SudokuSolving.gif&quot; alt=&quot;SudokuPlaying&quot; /&gt;.&lt;/p&gt;
+
+&lt;p&gt;Above I embedded a movie of this GNN operating over some of the sudoku dataset. What’s particularly interesting is that it seems to prioritize using the extra test time compute (graph refinement steps) to  attend to tokens it had previously assigned high uncertainty (low probability) to in the previous time steps. In other words red things become green and green things tend to remain green. This is fascinating because it suggests that the probabilities we extract from the logits seem to have some semantically meaningful concept of uncertainty.&lt;/p&gt;
+
+&lt;p&gt;Of further interest is that fact that this GNN actually seems to do better the &lt;em&gt;more&lt;/em&gt; iterations you give it. Particularly, if you evaluate it with more iterations than those it was trained with it continues to improve it’s accuracy in an almost monotonic way. Additionally, if you evaluate it on problems that are harder than the problems it was trained on, it actually still does reasonably well (check out the presentation for the actual graphs).&lt;/p&gt;
+
+&lt;p&gt;While nothing in the above is particularly &lt;a href=&quot;https://arxiv.org/pdf/1711.08028.pdf&quot;&gt;novel&lt;/a&gt;, it does demonstrate that at least in principle the test time compute dream is possible. The key ingredient here seems to be related to the recurrence &lt;em&gt;plus&lt;/em&gt; the message passing mechanism of these graph neural networks.&lt;/p&gt;
+
+&lt;h3 id=&quot;can-we-do-better-deqs-to-the-rescue&quot;&gt;Can we do better? DEQs to the rescue&lt;/h3&gt;
+&lt;p&gt;If the central argument here is &lt;em&gt;more test time compute in the form of iterations seems to be helpful&lt;/em&gt; what if we could take this argument to the infinite limit. In order to do this we need to steal the machinery from deep equilibrium models. I’ve written about deep equilibrium models several times before on this blog&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;, but the main take away here is that the graph refinement equation for graph neural networks is &lt;em&gt;exactly&lt;/em&gt; a fixed point equation which means that the implicit function theorem allows us to use some arbitrary black box root finding algorithm to both evaluate the value of the function at the equilibrium point and the value of the gradients there as well.&lt;/p&gt;
+
+\[h_i = \phi(\, x_i, \, \bigoplus_{j \in N_i} \psi(x_i, x_j) \,)\]
+
+\[g^t_i(h_i, x_i) = h^{t-1}_i - \phi(\, x^{t-1}_i, \, \bigoplus_{j \in N_i} \psi(x^{t-1}_i, x^{t-1}_j) \,)\]
+
+&lt;p&gt;Trying this out, works surprisingly well, &lt;em&gt;at first&lt;/em&gt;. The deep equilibrium GNN both trains much faster, seems to have better accuracy,  and has lower memory requirements than the traditional GNN.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/DEQGraphs.png&quot; alt=&quot;SudokuPlaying&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;All is not well in paradise however; every single time I’ve trained this model, i’ve observed a strange crash in the training accuracy occur several hours in. The DEQ GNN will train with better accuracy than the traditional GNN, and then all of a sudden die wherein the accuracy plummets to zero. I’m still investigating this and while I have some suspicions about the cause (particularly instability caused by the growth of the spectral norm of the operators) it could also very well be a bug in my training loop. Either way, just mentioning these things here for the sake of completeness.&lt;/p&gt;
+
+&lt;h2 id=&quot;learning-graph-adjacencies-using-policy-gradients&quot;&gt;Learning Graph Adjacencies Using Policy Gradients&lt;/h2&gt;
+
+&lt;p&gt;All the above is well and good, however, there’s something a little strange about the way I’ve seen graph neural networks used - the fact that the adjacencies must be encoded by hand. For the sudoku problem in particular, I had to explicitly bake in the fact that nodes that share a row, column or a cell are connected.  Could we instead learn the adjacencies from the raw unstructured data?&lt;/p&gt;
+
+&lt;p&gt;Here’s the idea: transformers are fairly adept at learning how relevant &lt;em&gt;pairs&lt;/em&gt; of tokens are to each other. On the other hand GNNs seem to be good at performing well on relational reasoning style tasks particularly over graph structured data. What if we could use the attention head from a standard transformer to extract an adjacency matrix which we then feed into a GNN.&lt;/p&gt;
+
+&lt;p&gt;This scheme operates by first feeding our input into a small transformer which has a small modification in the top layer such that we use the probability scores to categorically sample the top K indicies which are most relevant (i.e for each input token what are corresponding &lt;em&gt;k&lt;/em&gt; other tokens which the attention head assigns the highest normalized probability to). This then extracts K neighborhoods for each token which we than feed into our GNN.&lt;/p&gt;
+
+&lt;p&gt;Because sampling indices is a non differentiable operation, we need to compensate for this by using a gradient estimator. John Schulman has a great paper&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt; describing exactly how to do this in the general case for stochastic compute graphs.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/schulmanStochasticComputegraph.png&quot; alt=&quot;Stochastic Compute Graph&quot; /&gt;.&lt;/p&gt;
+
+&lt;p&gt;The formalism outlined in the paper  gives us a way to convert stochastic computation graphs into deterministic compute graphs and evaluate a “surrogate loss” that provides a mechanism to use standard backprop to arrive at an unbiased  gradient estimator through these stochastic nodes.&lt;/p&gt;
+
+&lt;p&gt;If you try all the above out it kind of works! Works in the sense that the model will achieve low training loss (as well as low validation loss). In reality however, there are several caveats here. The most obvious being the much slower training. Training this Frankenstein stochastic graph transformer took about 5 days compared to the 5 hours of training required for the traditional GNN. Additionally, performance is actually worse that the standard GNN –peaking at 62% best accuracy. Lastly, using vanilla policy gradients in this way has really high variance.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/validationLossStochasticGNNXformer.png&quot; alt=&quot;Stochastic GNN Transformer Loss&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;These objections and caveats aside, the interesting thing here is that this demonstrates that &lt;em&gt;in principle&lt;/em&gt; one &lt;em&gt;could&lt;/em&gt; train a GNN with adjacencies learned from scratch as well. I can imagine this being useful in a number of ways, particularly in contexts where its useful to use the strong relational reasoning performance of graph neural networks but we’d like to learn the graphs dynamically or in a context dependent way.&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://arxiv.org/abs/1907.05242 &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://www.youtube.com/watch?v=uF53xsT7mjc Fantastic resource &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://scikud.github.io/openai/2020/12/20/troubles/ &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://arxiv.org/pdf/1506.05254.pdf &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Fri, 09 Apr 2021 05:56:29 -0700</pubDate>
+        <link>http://localhost:4000/openai/2021/04/09/new-beginnings/</link>
+        <guid isPermaLink="true">http://localhost:4000/openai/2021/04/09/new-beginnings/</guid>
+      </item>
+    
+      <item>
         <title>Crunchtime</title>
         <description>&lt;h3 id=&quot;utility-functions&quot;&gt;Utility functions&lt;/h3&gt;
 &lt;p&gt;I’ve spent the past week writing some desperately neeeded utility functions to instrument the code that i’ve built out as part of the scholar’s program. Largely, i’ve been trying to gain a better understanding of exactly what’s going on inside these models as they operate over data continously. One lesson learned is on the importance of writing utility functions early, not only because it saves you valuable time when approaching deadlines, but also because being really explicit up front about the kind of data you would like to collect also informs what kind of experiments your’e likely to run.&lt;/p&gt;
@@ -544,92 +661,6 @@ In the midst of this, one of the particularly frustrating tactical aspects of th
         <pubDate>Thu, 22 Oct 2020 05:56:29 -0700</pubDate>
         <link>http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</link>
         <guid isPermaLink="true">http://localhost:4000/openai/pixylls/jeykll/2020/10/22/new-blog-who-dis/</guid>
-      </item>
-    
-      <item>
-        <title>Non-inertial Reference Frames and Coin Wishing Wells (Part I)</title>
-        <description>&lt;p&gt;Sometime ago, a friend of mine and I were curious about the physical principles that cause coins to sprial so elegantly down the kinds of coin funnels one might find at the  local mall.
-After searching online we were unable to find a description that was both mathematically satisfying and sufficiently captured the relevant physics. Having some free time, we decided to tackle this problem on our own&lt;/p&gt;
-
-&lt;h3 id=&quot;lets-talk-lagrangians&quot;&gt;Let’s talk Lagrangians&lt;/h3&gt;
-
-&lt;p&gt;Loosely speaking, in physics , whenever one is working on a trajectory problem that
-involves non-cartesian coordinates it’s often easier to find the equations of motion
-using the Lagrangian framework, which (as we’ll see for this problem) is far more convenient for solving
-problems that aren’t so well suited for Newton’s formulation of classical mechanics.&lt;/p&gt;
-
-&lt;p&gt;In particular, the utility of  Lagrange’s framework is that it allows for us to work
-in the so called &lt;em&gt;generalized coordinates&lt;/em&gt;. The principle being that if we’re being clever,
-these generalized coordinates can (and indeed should) be chosen to exploit geometry or symmetries
-present in the system we wish to analyze.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/OldBlog/Wishing_Well.jpeg&quot; alt=&quot;wishingWell&quot; width=&quot;400px&quot; /&gt;.&lt;/p&gt;
-
-&lt;p&gt;Looking at this image of a coin well cross section, we can imagine that it might be
-useful to describe the motion of a coin about the funnel in terms of it’s radius \(\hat{r}\) from the center  of the funnel,
-it’s azimuthal angle \(\hat{\theta}\), and it’s height \(\hat{z}\) within the well.&lt;/p&gt;
-
-&lt;p&gt;Above, the Lagrangian is a function of kinetic and potential energy. For the kinetic energy we have:&lt;/p&gt;
-
-\[T(x,y,z)= \frac{1}{2}m(\dot{x}^2+\dot{y}^2 +\dot{z}^2)  \leftrightarrow  T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\dot{z}^2)\]
-
-&lt;p&gt;the second expression for kinetic energy \(T\) follows since we have 
-\(x = rcos(\theta)\) and \(y= rsin(\theta)\).
-Then, since the height \(z\) is a function of the radius \(r\) we have&lt;/p&gt;
-
-\[\dot{z}(r,\dot{r}) = \frac{c_1\dot{r}}{r^2} \leadsto T=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4})\]
-
-&lt;p&gt;The potential energy for this system comes simply as a result of gravity. From kindergarten we have,&lt;/p&gt;
-
-\[U(z) = mgz \rightarrow  U(r) = mg(-\frac{c_1}{r}+c_2)\]
-
-&lt;p&gt;Therefore, we may write the lagrangian function \(\mathcal{L}=T-U\) as&lt;/p&gt;
-
-\[\mathcal{L}=\frac{1}{2}m(\dot{r}^2+r^2\dot{\theta}^2+\frac{c_1^2\dot{r}^2}{r^4}) - g(\frac{c_1}{r}+c_2)\]
-
-&lt;p&gt;At this point, before proceeding with Lagrange’s equation, it’s important to note that expression above doesn’t
-account for non-conservative forces (like friction) that dissipate the total energy of the coin as it proceeds down the well.
-It could be useful to model these viscous effects using the seemingly reasonable assumption that these frictional
-forces scaled proportionally with radial and angular velocity It turns out afterward, that this is actually a damn fine first order approximation&lt;/p&gt;
-
-&lt;p&gt;As an educated guess one could assume that this dissapative force might look something like&lt;/p&gt;
-
-\[F = \frac{1}{2}(k_r\dot{r}^2+k_{\theta}\dot{\theta}^2)\]
-
-&lt;p&gt;Where \(k_r\) and \(k_{\theta}\) are just some dissipative constants. This is the so called
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Rayleigh_dissipation_function&quot;&gt;Rayleigh dissipation function&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;For the radial component ,the Lagrange Equation (taking into account the dissipative friction effects we might expect the coin well to follow) may be written as&lt;/p&gt;
-
-\[\frac{\partial \mathcal{L}}{\partial r}-\frac{\partial \mathcal{L}}{\partial t}\frac{\partial \mathcal{L}}{\partial \dot{r}} = \frac{\partial F}{\partial \dot{r}}\]
-
-&lt;p&gt;After substituting the lagrangian  function $\mathcal{L}$ into the expression above, and after some tedious algebra we finally arrive at our first equation of motion&lt;/p&gt;
-
-\[\boxed{\ddot{r}(\frac{r^4+c_1^2}{r^4})-\frac{2c_1^2\dot{r}^2}{r^5}+\frac{gc_1}{r^2}-r\dot{\theta}^2=\frac{k_r\dot{r}}{m}}\]
-
-&lt;p&gt;Bitchin’!&lt;/p&gt;
-
-&lt;p&gt;Doing precisely the same thing for the \(\theta\) component, we arrive at the second equation of motion&lt;/p&gt;
-
-\[\boxed{-(r^2\ddot{\theta}+2r\dot{r}\dot{\theta})=k\dot{\theta}}\]
-
-&lt;p&gt;If you’re unfamiliar with Lagrangian mechanics, allow me to take a moment to explain why this result is significant:
-The complete equations of motion for this system were obtained &lt;em&gt;despite&lt;/em&gt; the fact that we &lt;em&gt;only&lt;/em&gt; specified the kinetic and potential energies of the coin without any
-reference to Newtonian theory i.e we were able to do this without ever explicitly considering the &lt;em&gt;forces&lt;/em&gt; acting on the coin.&lt;/p&gt;
-
-&lt;h3 id=&quot;experiments-and-simulations&quot;&gt;Experiments and Simulations&lt;/h3&gt;
-&lt;p&gt;I took the equations of motion above and plugged the differential equations above into MATLAB in order to simulate the coin’s trajectory.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/OldBlog/test_animate.gif&quot; alt=&quot;simulation&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Taking just a cursory qualitative look at the general form of the trajectory looks remarkably like the trajectories one sees in the actual coin wells.
-In the next part of this article, we’ll take a look at how we can get more quantitative confidence that what we’ve derived corresponds to reality. Stay tuned!&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-        <pubDate>Mon, 18 Nov 2019 04:56:29 -0800</pubDate>
-        <link>http://localhost:4000/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</link>
-        <guid isPermaLink="true">http://localhost:4000/openai/pixylls/jeykll/2019/11/18/coin-wishing-well/</guid>
       </item>
     
   </channel>
