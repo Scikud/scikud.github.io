@@ -3,6 +3,10 @@
 Source for [scikud.github.io](https://scikud.github.io) — an [Astro](https://astro.build) static
 site. No client-side JavaScript is shipped.
 
+The home page **is** the latest post. Every page carries an index of all posts:
+a sticky left pane on wide screens, an appendix below the article on narrow
+ones. Publishing a newer post automatically changes what `/` shows.
+
 ## Working on it
 
 ```sh
@@ -36,16 +40,21 @@ Set `draft: true` in the frontmatter to keep a post out of the build.
 
 ## Layout
 
-| Path                     | What it is                                             |
-| ------------------------ | ------------------------------------------------------ |
-| `src/content/posts/`     | The posts                                              |
-| `src/content.config.ts`  | Frontmatter schema (a build fails on bad frontmatter)  |
-| `src/consts.ts`          | Site title, description, author; date/reading-time     |
-| `src/layouts/Base.astro` | The `<head>`, masthead, footer                         |
-| `src/pages/`             | Home page and the post template                        |
-| `src/styles/global.css`  | All the styling                                        |
-| `astro.config.mjs`       | Markdown plugins and redirects from the old Jekyll URLs |
-| `public/`                | Copied to the site root as-is (images, favicons)       |
+| Path                            | What it is                                              |
+| ------------------------------- | ------------------------------------------------------- |
+| `src/content/posts/`            | The posts                                               |
+| `src/content.config.ts`         | Frontmatter schema (a build fails on bad frontmatter)   |
+| `src/consts.ts`                 | Site title, description, author; date/reading-time      |
+| `src/layouts/Base.astro`        | The `<head>`, masthead, page shell, footer              |
+| `src/components/PostArticle.astro` | Renders one post — title, meta, body                 |
+| `src/components/PostIndex.astro`   | The all-posts navigation pane                        |
+| `src/pages/`                    | `/` (latest post) and `/posts/<slug>/`                  |
+| `src/styles/global.css`         | All the styling                                         |
+| `astro.config.mjs`              | Markdown plugins and redirects from the old Jekyll URLs |
+| `public/`                       | Copied to the site root as-is (images, favicons)        |
+
+Layout knobs live at the top of `global.css`: `--measure` (content column),
+`--index-width`, and `--index-gap`. The two-column breakpoint is `64em`.
 
 ## Deploys
 

@@ -1,16 +1,29 @@
 ---
 import { SITE } from '../consts';
+import PostIndex from '../components/PostIndex.astro';
+
+// Self-hosted (no CDN request at runtime). Merriweather sets prose, Lato headings.
+import '@fontsource/merriweather/latin-400.css';
+import '@fontsource/merriweather/latin-400-italic.css';
+import '@fontsource/merriweather/latin-700.css';
+import '@fontsource/lato/latin-400.css';
+import '@fontsource/lato/latin-900.css';
+
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Override when a page duplicates another's content (the home page). */
+  canonical?: URL;
+  /** Slug of the post to mark as current in the index pane. */
+  currentId?: string;
 }
 
-const { title, description = SITE.description } = Astro.props;
+const { title, description = SITE.description, currentId } = Astro.props;
 const pageTitle = title ? `${title} — ${SITE.title}` : SITE.title;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = Astro.props.canonical ?? new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -40,9 +53,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <a href="/">{SITE.title}</a>
     </header>
 
-    <main>
-      <slot />
-    </main>
+    {/* Content sits before the index in the DOM so it comes first for screen
+        readers and on narrow screens; the grid puts the index on the left. */}
+    <div class="shell">
+      <main>
+        <slot />
+      </main>
+      <PostIndex currentId={currentId} />
+    </div>
 
     <footer>
       <p>© {new Date().getFullYear()} {SITE.author}</p>

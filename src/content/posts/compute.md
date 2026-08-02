@@ -15,5 +15,3 @@ Broadly, I actually don't think that simply scaling learning models will lead to
 Generally, I believe there's a great deal of utility in thinking more explicitly about compute budgets as a fundamental part of the broader optimization problem we attempt to solve when constructing machine learning models. Explicitly, given a fixed computational budget how do we optimize that budget between our training and test time regimes?  This question takes increasing precedence when you operate at the scale of OpenAI.  In some sense active learning is one perspective to approach this question (e.g which subsets of the internet should you train your GPT-X model, keeping in mind that determining those subsets also comes from your compute budget).  More speculatively, other approaches seem to indirectly relate to this question of  iterative improvement/test time compute as well, particularly Hebbian learning approaches, or latent variable energy models.  
 
 Anywho, that's all for now. Catch you on the flip.
-
---

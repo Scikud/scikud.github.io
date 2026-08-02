@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import { formatDateShort } from '../consts';
+
+interface Props {
+  currentId?: string;
+}
+
+const { currentId } = Astro.props;
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<nav class="index" aria-label="All posts">
+  <h2 class="index-heading">Posts</h2>
+  <ol>
+    {
+      posts.map((post) => (
+        <li class={post.id === currentId ? 'current' : undefined}>
+          <a
+            href={`/posts/${post.id}/`}
+            aria-current={post.id === currentId ? 'page' : undefined}
+          >
+            <span class="index-date">{formatDateShort(post.data.date)}</span>
+            <span class="index-title">{post.data.title}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>

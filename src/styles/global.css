@@ -3,9 +3,8 @@
    --------------------------------------------------------------------------- */
 
 :root {
-  --serif: Charter, 'Bitstream Charter', 'Iowan Old Style', 'Source Serif 4', Georgia,
-    'Times New Roman', serif;
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --serif: Merriweather, Georgia, 'Times New Roman', serif;
+  --sans: Lato, system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
   --ink: #16181d;
@@ -15,8 +14,16 @@
   --surface: #fafaf9;
   --link: #0f5299;
 
-  --measure: 41rem;
+  /* Width of the content column. Dial this one value to trade side margin
+     for line length. */
+  --measure: 48rem;
   --gutter: 1.5rem;
+  --index-width: 13rem;
+  --index-gap: 3.5rem;
+  /* Full page width: index pane + gap + content column. The two-column layout
+     kicks in at 64em — hardcoded in the media queries, since custom properties
+     can't be used in media conditions. */
+  --page: calc(var(--index-width) + var(--index-gap) + var(--measure));
 }
 
 /* ---------------------------------------------------------------------------
@@ -35,6 +42,7 @@ body {
   color: var(--ink);
   font-family: var(--serif);
   font-size: 1.0625rem;
+  font-weight: 400;
   line-height: 1.7;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -75,9 +83,9 @@ h4,
 h5,
 h6 {
   font-family: var(--sans);
-  font-weight: 650;
+  font-weight: 900;
   line-height: 1.25;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   color: var(--ink);
   text-wrap: balance;
 }
@@ -86,12 +94,18 @@ h6 {
    Frame: masthead / main / footer
    --------------------------------------------------------------------------- */
 
+/* One column by default: everything lines up on the content measure. The
+   two-column rules below widen this to make room for the index pane. */
 .masthead,
-main,
+.shell,
 footer {
   max-width: var(--measure);
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+main {
+  max-width: var(--measure);
 }
 
 .masthead {
@@ -101,7 +115,7 @@ footer {
 .masthead a {
   font-family: var(--sans);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink);
@@ -113,7 +127,7 @@ footer {
 }
 
 main {
-  padding-bottom: 5rem;
+  padding-bottom: 2rem;
 }
 
 footer {
@@ -129,49 +143,105 @@ footer p {
 }
 
 /* ---------------------------------------------------------------------------
-   Home: post list
+   Index pane — the list of every post. A left column on wide screens, and an
+   appendix below the article on narrow ones.
    --------------------------------------------------------------------------- */
 
-.post-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.index {
+  margin-top: 1.5rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--rule);
 }
 
-.post-list li {
-  border-bottom: 1px solid var(--rule);
-}
-
-.post-list a {
-  display: block;
-  padding-block: 2rem;
-  color: inherit;
-  text-decoration: none;
-}
-
-.post-list time {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+.index-heading {
+  margin: 0 0 1.25rem;
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-muted);
 }
 
-.post-list h2 {
-  margin: 0.4rem 0 0;
-  font-size: 1.5rem;
+.index ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.post-list a:hover h2 {
+.index li {
+  border-left: 2px solid transparent;
+  padding-left: 0.9rem;
+}
+
+.index li + li {
+  margin-top: 1.1rem;
+}
+
+.index li.current {
+  border-left-color: var(--ink);
+}
+
+.index a {
+  display: block;
+  font-family: var(--sans);
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.index-date {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.index-title {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.index a:hover .index-title {
   color: var(--link);
 }
 
-.post-list p {
-  margin: 0.5rem 0 0;
-  color: var(--ink-muted);
+.index li.current .index-title {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+@media (min-width: 64em) {
+  .masthead,
+  .shell,
+  footer {
+    max-width: var(--page);
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: var(--index-width) minmax(0, 1fr);
+    column-gap: var(--index-gap);
+    align-items: start;
+  }
+
+  main {
+    grid-area: 1 / 2;
+    padding-bottom: 4rem;
+  }
+
+  .index {
+    grid-area: 1 / 1;
+    position: sticky;
+    top: 2.5rem;
+    max-height: calc(100vh - 5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -202,22 +272,6 @@ footer p {
 
 .post-meta span {
   margin-inline: 0.35rem 0.2rem;
-}
-
-.post-nav {
-  margin-top: 4rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--rule);
-  font-family: var(--sans);
-  font-size: 0.875rem;
-}
-
-.post-nav a {
-  text-decoration: none;
-}
-
-.post-nav a:hover {
-  text-decoration: underline;
 }
 
 /* ---------------------------------------------------------------------------
