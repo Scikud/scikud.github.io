@@ -263,8 +263,17 @@ footer p {
   }
 }
 
+/* The frontmatter `summary` — an aside under the title, in the author's voice
+   rather than a description of the piece. */
+.post-dek {
+  margin: 0.6rem 0 0;
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
 .post-meta {
-  margin: 0.75rem 0 0;
+  margin: 0.6rem 0 0;
   font-family: var(--sans);
   font-size: 0.8125rem;
   color: var(--ink-muted);
