@@ -2,6 +2,7 @@
 title: "The road so far ...."
 date: 2021-01-15
 summary: "A summary"
+description: "A month of narrowing a research direction: temporal recurrence in fast autoregressive transformers, external memory, and why the shortest-path dataset is so hard."
 ---
 
 ### What i've been thinking about

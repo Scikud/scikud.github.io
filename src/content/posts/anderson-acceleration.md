@@ -2,6 +2,7 @@
 title: "On Fixed points"
 date: 2021-01-29
 summary: "A quick point"
+description: "Two thoughts on deep equilibrium models: whether converging to a fixed point limits expressivity, and how Anderson acceleration speeds up fixed-point iteration."
 ---
 
 ### Some thoughts

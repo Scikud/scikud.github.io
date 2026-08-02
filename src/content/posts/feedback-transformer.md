@@ -2,6 +2,7 @@
 title: "Crunchtime"
 date: 2021-02-25
 summary: "Sharing Some Code"
+description: "On writing instrumentation early, plus a working PyTorch implementation of the feedback transformer, where lower layers attend to earlier higher-level representations."
 ---
 
 ### Utility functions

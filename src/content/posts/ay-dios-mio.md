@@ -2,6 +2,7 @@
 title: "Chasing the White Rabbit"
 date: 2020-11-05
 summary: "Searching for lightbulbs"
+description: "On rabbit holes, allocating research time, and learning to work with imperfect information in the early stages of a research program."
 ---
 
 Election week 2020 has been one of the longest 56 years of my life. Trying to get anything substantial accomplished in this context has been a humbling reminder of the limits of my will. 

@@ -2,6 +2,7 @@
 title: "I may need to rethink things..."
 date: 2020-12-20
 summary: "ruh roh"
+description: "Deep equilibrium models from the NeurIPS 2020 implicit layers workshop, and what their memory savings imply for a project premised on test-time compute."
 ---
 
 One of the particularly fascinating things i've encountered during NEURIPS 2020 was a workshop on deep implicit layers that raises some questions about the nature of my current project proposal for the OpenAI scholars program. While I highly recommend checking out the [tutorial](http://implicit-layers-tutorial.org/) and working through the main ideas for yourself, I'll try to super briefly outline the principle argument and method. All figures in this post are [stolen from their work](https://arxiv.org/pdf/1909.01377.pdf). 

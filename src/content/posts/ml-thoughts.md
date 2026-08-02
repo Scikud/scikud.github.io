@@ -2,6 +2,7 @@
 title: "Updating my views"
 date: 2021-02-12
 summary: "idk man, stuff"
+description: "Test-time compute in the form of recurrence turns out to act mostly as a fancy regularizer, which changed how I think about where machine learning is headed."
 ---
 
  

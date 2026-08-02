@@ -2,6 +2,7 @@
 title: "Non-inertial Reference Frames and Coin Wishing Wells (Part I)"
 date: 2019-11-18
 summary: "Exploration from the old blog"
+description: "Deriving the equations of motion for a coin spiralling down a wishing well, using Lagrangian mechanics and a Rayleigh dissipation function to model friction."
 ---
 
 Sometime ago, a friend of mine and I were curious about the physical principles that cause coins to sprial so elegantly down the kinds of coin funnels one might find at the  local mall.

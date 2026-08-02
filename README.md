@@ -25,7 +25,8 @@ Add a markdown file to `src/content/posts/`. The filename is the URL slug, so
 ---
 title: "My post"
 date: 2026-08-01
-summary: "One line shown on the home page."
+summary: "The aside under the title. Be as flippant as you like."
+description: "What search engines and link previews show."
 ---
 
 Body text. Standard markdown, plus:
@@ -36,7 +37,10 @@ Body text. Standard markdown, plus:
 - Images — put files in `public/images/` and reference them as `/images/foo.png`.
 ```
 
-Set `draft: true` in the frontmatter to keep a post out of the build.
+Only `title` and `date` are required. `summary` is rendered under the title;
+`description` never appears on the page — it exists so a one-word joke can be
+your dek without also becoming your search snippet. Omit it and `summary` is
+used instead. Set `draft: true` to keep a post out of the build entirely.
 
 ## Layout
 

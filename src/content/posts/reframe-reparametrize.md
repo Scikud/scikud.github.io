@@ -2,6 +2,7 @@
 title: "Reframe/Reparametrize"
 date: 2020-11-22
 summary: "Another post courtesy of ya boy Lagrange"
+description: "Deriving the Gaussian, the backpropagation algorithm, and TRPO by reframing each as a constrained optimization problem solved with Lagrange multipliers."
 ---
 
 In continuation of the tradition of this blog, where I start off writing a post about one topic and ultimately end up deleting it a quarter of the way through and begin writing about something totally different, I present to you this week's topic: reframing and reparametrization using Lagrange multipliers. 

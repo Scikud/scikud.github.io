@@ -2,6 +2,7 @@
 title: "No, less isn't more, more is more?"
 date: 2020-12-04
 summary: "Compute maximalism"
+description: "State-of-the-art models are trained on huge clusters and deployed on much smaller ones. Can smaller adaptive models spend test-time compute to close that gap?"
 ---
 
 Over the past two weeks, I've been thinking more about which research direction I'd like to pursue for the remainder of the scholar's program. In this post ,I'd like to just outline just the motivating question without much exposition about my approach. I don't want to spend too much time talking about my research direction just yet largely because I'm still searching for mechanisms to think more clearly about these issues. 

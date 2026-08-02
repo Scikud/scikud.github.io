@@ -2,6 +2,7 @@
 title: "Wrapping Up"
 date: 2021-04-09
 summary: "All good things"
+description: "A recap of my OpenAI Scholars project: why adding recurrence to language models failed to deliver on test-time compute, and why graph neural networks over sudoku worked."
 ---
 
  

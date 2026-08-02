@@ -13,7 +13,7 @@ const latest = posts[0];
 
 <Base
   title={latest?.data.title}
-  description={latest?.data.summary}
+  description={latest?.data.description ?? latest?.data.summary}
   canonical={latest && new URL(`/posts/${latest.id}/`, Astro.site)}
   currentId={latest?.id}
 >

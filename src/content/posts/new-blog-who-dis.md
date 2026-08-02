@@ -2,6 +2,7 @@
 title: "OpenAIs Scholars Initial Thoughts"
 date: 2020-10-22
 summary: "New blog who dis?"
+description: "Starting the OpenAI Scholars program: what I'm excited about in deep learning, and a running log of half-formed ideas from a week of self-study."
 ---
 
 I'm starting a new blog[^1]  to mark the beginning of my time as part of the OpenAI scholar's program
